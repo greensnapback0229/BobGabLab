@@ -1,5 +1,7 @@
 <template>
   <div>
+    <!-- 로그인, 회원가입 페이지가 아닐 때만 Navbar 표시 -->
+    <Navbar v-if="!['/login', '/signup'].includes(route.path)" />
     <RouterView />
   </div>
 </template>
@@ -9,7 +11,9 @@ import './assets/main.css';
 
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import Navbar from './components/Navbar.vue';
 
+const route = useRoute();
 const router = useRouter();
 const isLoggedIn = ref(false);
 onMounted(() => {
