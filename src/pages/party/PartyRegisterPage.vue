@@ -82,6 +82,7 @@ const registerParty = async () => {
   ).toISOString();
 
   const partyData = {
+    title: title.value,
     owner: userId,
     location: place.value,
     promiseTime: isoTime,

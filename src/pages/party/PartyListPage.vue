@@ -8,7 +8,9 @@
     <!-- Table -->
     <div class="container">
       <div class="d-flex justify-content-end mb-2">
-        <button class="btn btn-outline-success">등록</button>
+        <router-link to="/party/register">
+          <button class="btn btn-outline-success">등록</button>
+        </router-link>
       </div>
       <table class="table table-bordered table-hover align-middle text-center">
         <thead class="table-light">
@@ -84,7 +86,7 @@ export default {
 
         return {
           no: index + 1,
-          title: party.location,
+          title: party.title,
           date: promise.format('YYYY-MM-DD'),
           time: promise.format('HH:mm'),
           posted,
