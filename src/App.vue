@@ -1,12 +1,12 @@
 <template>
   <div>
-    <!-- 로그인, 회원가입 페이지가 아닐 때만 Navbar 표시 -->
     <Navbar v-if="!['/login', '/signup'].includes(route.path)" />
     <RouterView />
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import './assets/main.css';
 
 import { ref, onMounted } from 'vue';
@@ -28,6 +28,9 @@ onMounted(() => {
     router.replace('/');
   }
 });
+
+// login 경로에서는 navbar 숨기기
+const showNavbar = computed(() => router.path !== '/login');
 </script>
 
 <style>
