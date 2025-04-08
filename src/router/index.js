@@ -17,7 +17,30 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../pages/AboutPage.vue'),
     },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/pages/LoginPage.vue'),
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('@/pages/SignupPage.vue'),
+    },
   ],
 });
 
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('auth') === 'true';
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    return next('/login');
+  }
+
+  if (to.path === '/login' && isLoggedIn) {
+    return next('/');
+  }
+
+  next();
+});
 export default router;
