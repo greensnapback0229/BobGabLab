@@ -20,7 +20,10 @@
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/party" class="nav-link d-flex align-items-center">
+          <router-link
+            to="/party/list"
+            class="nav-link d-flex align-items-center"
+          >
             <img src="@/components/icons/nav/party.png" alt="party" />
             <i class="fas fa-users me-1"></i> 파티 모집
           </router-link>

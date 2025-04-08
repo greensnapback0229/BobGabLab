@@ -1,5 +1,16 @@
 {
-  "user": [],
+  "user": [
+    {
+      "id": "cf1a",
+      "username": "서승준",
+      "password": "1234",
+      "class": 15,
+      "mode": "",
+      "total": 0,
+      "lunchParty": [],
+      "lastLunch": ""
+    }
+  ],
   "lunchParty": [
     {
       "id": "5e98",
