@@ -1,0 +1,17 @@
+.bg-custom-green {
+  background-color: #71b548 !important;
+}
+.bg-custom-green-op {
+  background-color: rgba(113, 181, 72, 0.5) !important;
+}
+.text-custom-green {
+  color: #003d0f !important;
+}
+.div-custom-beige {
+  background-color: #faf8f3 !important;
+}
+
+.nav-link img {
+  height: 25px; /* 기존보다 살짝 작게 */
+  margin-right: 8px; /* 아이콘 오른쪽 간격 확보 */
+}

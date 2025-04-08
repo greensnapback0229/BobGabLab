@@ -1,0 +1,127 @@
+<template>
+  <div>
+    <!-- Title -->
+    <div class="container text-center my-5">
+      <h2><span class="title-launch">LAUNCH</span> 파티 모집 🎈</h2>
+    </div>
+
+    <!-- Table -->
+    <div class="container">
+      <div class="d-flex justify-content-end mb-2">
+        <button class="btn btn-outline-success">등록</button>
+      </div>
+      <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-light">
+          <tr>
+            <th>No.</th>
+            <th>Title</th>
+            <th>약속 시간</th>
+            <th>게시일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(party, index) in parties" :key="index">
+            <td>{{ party.no }}</td>
+            <td
+              class="text-start"
+              :class="{ 'text-success fw-semibold': party.highlight }"
+            >
+              <a
+                v-if="party.link"
+                :href="party.link"
+                class="text-decoration-none text-success"
+              >
+                {{ party.title }}
+              </a>
+              <span v-else>
+                <a href="">{{ party.title }}</a>
+              </span>
+            </td>
+            <td>{{ party.date }}<br />{{ party.time }}</td>
+            <td>{{ party.posted }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+import dayjs from 'dayjs';
+
+export default {
+  name: 'PartyList',
+  data() {
+    return {
+      parties: [],
+    };
+  },
+  async created() {
+    try {
+      const response = await axios.get('http://localhost:3000/lunchParty');
+      const allParties = response.data;
+
+      console.log(response);
+      // 최신순으로 정렬 (약속시간 기준)
+      const sorted = allParties
+        .sort((a, b) => new Date(b.promiseTime) - new Date(a.promiseTime))
+        .slice(0, 7);
+
+      // 포맷팅된 데이터로 변환
+      this.parties = sorted.map((party, index) => {
+        const promise = dayjs(party.promiseTime);
+        const now = dayjs();
+
+        let posted = '';
+        if (now.diff(promise, 'day') === 0) {
+          posted = '하루 전';
+        } else if (now.diff(promise, 'day') < 0) {
+          posted = '미래';
+        } else {
+          posted = '지난 주';
+        }
+
+        return {
+          no: index + 1,
+          title: party.location,
+          date: promise.format('YYYY-MM-DD'),
+          time: promise.format('HH:mm'),
+          posted,
+          highlight: index === 0, // 첫 번째 항목만 강조 표시
+          link: index === 0 ? `/party/details/${party.id}` : null, // 클릭 가능 링크 예시
+        };
+      });
+    } catch (err) {
+      console.error('Error fetching lunch parties:', err);
+    }
+  },
+};
+</script>
+
+<style scoped>
+body {
+  background-color: #f5f5f1;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.logo-text {
+  font-weight: bold;
+  font-size: 24px;
+  color: #1d5722;
+}
+.title-launch {
+  font-weight: bold;
+  font-size: 32px;
+  color: #5db85c;
+}
+.table-hover tbody tr:hover {
+  background-color: #eaf7ea;
+}
+.btn-register {
+  background-color: #6cba53;
+  color: white;
+}
+.btn-register:hover {
+  background-color: #589944;
+}
+</style>

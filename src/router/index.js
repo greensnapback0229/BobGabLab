@@ -47,6 +47,7 @@ const router = createRouter({
       name: 'financeRegister',
       component: () => import('@/pages/FinanceRegisterPage.vue'),
     },
+
     {
       path: '/random',
       name: 'random',
