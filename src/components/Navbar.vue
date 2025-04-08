@@ -5,7 +5,7 @@
     >
       <!-- 로고 (텍스트 제거됨) -->
       <router-link to="/home" class="navbar-brand me-4">
-        <img src="@/assets/logo.png" alt="로고" height="36" />
+        <img src="@/components/icons/logo1.png" alt="로고" height="36" />
       </router-link>
 
       <!-- 네비 메뉴: 아이콘 + 텍스트 수평 정렬 -->
