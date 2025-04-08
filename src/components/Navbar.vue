@@ -15,17 +15,20 @@
       >
         <li class="nav-item">
           <router-link to="/history" class="nav-link d-flex align-items-center">
+            <img src="@/components/icons/nav/list.png" alt="list" />
             <i class="fas fa-list me-1"></i> 거래 내역
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/party" class="nav-link d-flex align-items-center">
+            <img src="@/components/icons/nav/party.png" alt="party" />
             <i class="fas fa-users me-1"></i> 파티 모집
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/profile" class="nav-link d-flex align-items-center">
-            <i class="fas fa-user me-1"></i> 프로필
+            <img src="@/components/icons/nav/profile.png" alt="profile" />
+            <i class="fas fa-user me-1"></i> 프로필 수정
           </router-link>
         </li>
       </ul>

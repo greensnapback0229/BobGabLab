@@ -19,7 +19,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (found) {
         isAuthenticated.value = true;
+        user.value = found;
         localStorage.setItem('auth', 'true');
+        localStorage.setItem('userId', found.id);
         return true;
       } else {
         isAuthenticated.value = false;
@@ -53,7 +55,12 @@ export const useAuthStore = defineStore('auth', () => {
       const postRes = await axios.post(corsUrl, newUser);
 
       if (postRes.status === 201) {
+        const newUser = postRes.data;
+        isAuthenticated.value = true;
+        user.value = newUser;
+
         localStorage.setItem('auth', 'true');
+        localStorage.setItem('userId', newUser.id);
         return true;
       } else {
         isAuthenticated.value = false;
@@ -64,11 +71,47 @@ export const useAuthStore = defineStore('auth', () => {
       return false;
     }
   }
+
+  async function updateProfile(updatedFields) {
+    try {
+      const id = user.value.id;
+
+      // 수정 요청 (json-server 기준 PATCH)
+      const res = await axios.patch(`${corsUrl}/${id}`, updatedFields);
+
+      if (res.status === 200) {
+        // user 객체 갱신
+        user.value = res.data;
+        return true;
+      } else {
+        console.error('업데이트 실패:', res);
+        return false;
+      }
+    } catch (err) {
+      console.error('프로필 수정 에러:', err);
+      return false;
+    }
+  }
+
+  async function getUsernameByStoredId() {
+    try {
+      const id = localStorage.getItem('userId');
+      if (!id) return null;
+      const res = await axios.get(`${corsUrl}/${id}`);
+      return res.data;
+    } catch (e) {
+      console.error('유저 정보 가져오기 실패:', e);
+      return null;
+    }
+  }
+
   return {
     isAuthenticated,
     user,
     login,
     logout,
     signup,
+    updateProfile,
+    getUsernameByStoredId,
   };
 });

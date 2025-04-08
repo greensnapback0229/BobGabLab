@@ -1,10 +1,7 @@
 <template>
   <div>
-    <!-- /login이 아닐 때만 Navbar 보여주기 -->
-    <Navbar />
-
-    <!-- 라우트에 따라 내용이 바뀜 -->
-    <router-view />
+    <Navbar v-if="!['/login', '/signup'].includes(route.path)" />
+    <RouterView />
   </div>
 </template>
 
@@ -16,6 +13,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Navbar from './components/Navbar.vue';
 
+const route = useRoute();
 const router = useRouter();
 const isLoggedIn = ref(false);
 onMounted(() => {
