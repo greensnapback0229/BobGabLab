@@ -33,7 +33,9 @@
               >
                 {{ party.title }}
               </a>
-              <span v-else>{{ party.title }}</span>
+              <span v-else>
+                <a href="">{{ party.title }}</a>
+              </span>
             </td>
             <td>{{ party.date }}<br />{{ party.time }}</td>
             <td>{{ party.posted }}</td>
@@ -45,12 +47,54 @@
 </template>
 
 <script>
+import axios from 'axios';
+import dayjs from 'dayjs';
+
 export default {
   name: 'PartyList',
   data() {
     return {
       parties: [],
     };
+  },
+  async created() {
+    try {
+      const response = await axios.get('http://localhost:3000/lunchParty');
+      const allParties = response.data;
+
+      console.log(response);
+      // 최신순으로 정렬 (약속시간 기준)
+      const sorted = allParties
+        .sort((a, b) => new Date(b.promiseTime) - new Date(a.promiseTime))
+        .slice(0, 7);
+
+      // 포맷팅된 데이터로 변환
+      this.parties = sorted.map((party, index) => {
+        const promise = dayjs(party.promiseTime);
+        const now = dayjs();
+
+        let posted = '';
+        if (now.diff(promise, 'day') === 0) {
+          posted = '하루 전';
+        } else if (now.diff(promise, 'day') < 0) {
+          posted = '미래';
+        } else {
+          posted = '지난 주';
+        }
+
+        return {
+          no: index + 1,
+          title: party.location,
+          date: promise.format('YYYY-MM-DD'),
+          time: promise.format('HH:mm'),
+          posted,
+          highlight: index === 0, // 첫 번째 항목만 강조 표시
+          link: index === 0 ? `/party/details/${party.id}` : null, // 클릭 가능 링크 예시
+        };
+      });
+    } catch (err) {
+      console.error('Error fetching lunch parties:', err);
+    }
   },
 };
 </script>

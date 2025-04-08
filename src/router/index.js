@@ -30,7 +30,12 @@ const router = createRouter({
     {
       path: '/party/list',
       name: 'partyList',
-      component: () => import('@/pages/party/PartyList.vue'),
+      component: () => import('@/pages/party/PartyListPage.vue'),
+    },
+    {
+      path: '/party/register',
+      name: 'partyRegister',
+      component: () => import('@/pages/party/PartyRegisterPage.vue'),
     },
   ],
 });
