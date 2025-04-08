@@ -27,6 +27,11 @@ const router = createRouter({
       name: 'signup',
       component: () => import('@/pages/SignupPage.vue'),
     },
+    {
+      path: '/party/list',
+      name: 'partyList',
+      component: () => import('@/pages/party/PartyList.vue'),
+    },
   ],
 });
 
