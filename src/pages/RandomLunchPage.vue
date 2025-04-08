@@ -1,5 +1,5 @@
 <template>
-  <section class="home-page">
+  <section class="home-page min-vh-100">
     <h2>오늘의 점심 메뉴는?</h2>
 
     <!-- 회전 컨테이너 -->
@@ -9,6 +9,7 @@
         v-for="(item, idx) in items"
         :key="idx"
         class="roulette-item"
+        :class="{ selected: selectedItem && selectedItem.name === item.name }"
         :style="getItemStyle(idx)"
       >
         <div class="item-inner">
@@ -27,7 +28,7 @@
         :disabled="isRotating"
         :class="{ rotating: isRotating }"
       >
-        회전 시작
+        추첨
       </button>
     </div>
 
@@ -45,6 +46,7 @@ import { ref } from 'vue';
  * 항목 목록 – 현재는 이름(텍스트)만 사용하지만, 추후 사진을 삽입할 수 있도록 src 필드도 유지함
  */
 const items = [
+  // 원래 항목 6개
   {
     name: '김치찌개',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
@@ -69,20 +71,142 @@ const items = [
     name: '된장찌개',
     src: new URL('@/assets/images/food6.png', import.meta.url).href,
   },
+
+  // 추가된 항목 30개 예시 (여기서는 일부만 나열)
+  {
+    name: '불고기',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  {
+    name: '비빔냉면',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  {
+    name: '김치전',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  {
+    name: '잡채',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  {
+    name: '갈비탕',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  {
+    name: '삼계탕',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  {
+    name: '감자탕',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  {
+    name: '떡볶이',
+    src: new URL('@/assets/images/food1.png', import.meta.url).href,
+  },
+  // 중식 (7개)
+  {
+    name: '짜장면',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '짬뽕',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '탕수육',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '마파두부',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '양장피',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '볶음밥',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '군만두',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  // 양식 (8개)
+  {
+    name: '스파게티',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  {
+    name: '스테이크',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  {
+    name: '피자',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  {
+    name: '샐러드',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  {
+    name: '리조또',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  {
+    name: '햄버거',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  {
+    name: '푸아그라',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  {
+    name: '치즈플래터',
+    src: new URL('@/assets/images/food3.png', import.meta.url).href,
+  },
+  // 일식 (7개)
+  {
+    name: '초밥',
+    src: new URL('@/assets/images/food4.png', import.meta.url).href,
+  },
+  {
+    name: '우동',
+    src: new URL('@/assets/images/food4.png', import.meta.url).href,
+  },
+  {
+    name: '라멘',
+    src: new URL('@/assets/images/food4.png', import.meta.url).href,
+  },
+  {
+    name: '돈부리',
+    src: new URL('@/assets/images/food4.png', import.meta.url).href,
+  },
+  {
+    name: '가츠동',
+    src: new URL('@/assets/images/food4.png', import.meta.url).href,
+  },
+  {
+    name: '덴푸라',
+    src: new URL('@/assets/images/food4.png', import.meta.url).href,
+  },
+  {
+    name: '타코야키',
+    src: new URL('@/assets/images/food4.png', import.meta.url).href,
+  },
 ];
 
 const currentRotation = ref(0);
 const isRotating = ref(false);
 const selectedItem = ref(null);
 let animationFrame = null;
-const rotationDuration = 5000;
+const rotationDuration = Math.floor(2500 + Math.random() * 1001);
 let startTime = null;
 
-// 타원 궤도 (예: 가로 350, 세로 80)
 const rx = 350;
 const ry = 80;
-
-// 스케일 범위
 const minScale = 0.5;
 const maxScale = 1.2;
 
@@ -129,7 +253,7 @@ function animate(timestamp) {
       currentRotation.value -= 5;
     } else {
       const t = (elapsed - (rotationDuration - 2000)) / 2000;
-      const speed = 5 * (1 - t);
+      const speed = 10 * (1 - t);
       currentRotation.value -= speed;
     }
     animationFrame = requestAnimationFrame(animate);
@@ -235,7 +359,6 @@ function determineSelectedItem() {
   border-radius: 8px;
 }
 
-/* 회전 중이면 버튼 배경색을 회색과 커서를 기본으로 변경 */
 .controls button.rotating {
   background-color: #ccc;
   cursor: default;
@@ -244,5 +367,13 @@ function determineSelectedItem() {
 .result {
   margin-top: 1rem;
   font-size: 1.2rem;
+}
+
+/* 선택된 항목에 대한 스타일: 원 테두리 및 글씨 두껍게 */
+.roulette-item.selected {
+  border: 3px solid #71b548;
+}
+.roulette-item.selected .food-text {
+  font-weight: bold;
 }
 </style>
