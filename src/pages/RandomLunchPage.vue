@@ -22,7 +22,13 @@
 
     <!-- 회전 시작 버튼 -->
     <div class="controls">
-      <button @click="startRotation" :disabled="isRotating">회전 시작</button>
+      <button
+        @click="startRotation"
+        :disabled="isRotating"
+        :class="{ rotating: isRotating }"
+      >
+        회전 시작
+      </button>
     </div>
 
     <!-- 결과 (텍스트는 1cm 아래로 배치) -->
@@ -200,7 +206,6 @@ function determineSelectedItem() {
   justify-content: center;
 }
 
-/* 텍스트 항목 스타일 (현재 food-image 대신 food-text 클래스를 사용) */
 .food-text {
   display: block;
   font-size: 1.2rem;
@@ -208,7 +213,6 @@ function determineSelectedItem() {
   color: #003d0f;
 }
 
-/* 빨간색 포인터 (타원 하단에서 2cm 아래) */
 .pointer {
   position: absolute;
   top: calc(50% + 80px + 2cm);
@@ -231,8 +235,14 @@ function determineSelectedItem() {
   border-radius: 8px;
 }
 
+/* 회전 중이면 버튼 배경색을 회색과 커서를 기본으로 변경 */
+.controls button.rotating {
+  background-color: #ccc;
+  cursor: default;
+}
+
 .result {
-  margin-top: 1cm;
+  margin-top: 1rem;
   font-size: 1.2rem;
 }
 </style>
