@@ -1,45 +1,6 @@
 {
-  "user": [
-    {
-      "id": "cf1a",
-      "username": "서승준",
-      "password": "1234",
-      "class": 15,
-      "mode": "",
-      "total": 0,
-      "lunchParty": [],
-      "lastLunch": ""
-    }
-  ],
-  "lunchParty": [
-    {
-      "id": "5e98",
-      "owner": "user-1",
-      "location": "ㄹㄷㅈㅁ",
-      "promiseTime": "2025-04-08T17:10:00.000Z",
-      "participation": [
-        "user-1"
-      ]
-    },
-    {
-      "id": "5cae",
-      "owner": "user-1",
-      "location": "중국집",
-      "promiseTime": "2025-04-08T16:00:00.000Z",
-      "participation": [
-        "user-1"
-      ]
-    },
-    {
-      "id": "3e43",
-      "owner": "user-1",
-      "location": "ㄹㅈㄷㅁ",
-      "promiseTime": "2025-04-07T16:00:00.000Z",
-      "participation": [
-        "user-1"
-      ]
-    }
-  ],
+  "user": [],
+  "lunchParty": [],
   "restaurant": [],
   "foodFinance": []
 }
