@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../pages/HomePage.vue';
+import HomePage from '../pages/HomePage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/home',
+      path: '/',
       name: 'home',
       component: () => import('../pages/HomePage.vue'),
     },
@@ -57,6 +57,7 @@ const router = createRouter({
       name: 'FinanceEdit',
       component: () => import('@/pages/FinanceEditPage.vue'),
       meta: { requiresAuth: true },
+    },
     {
       path: '/random',
       name: 'random',
