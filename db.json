@@ -9,6 +9,16 @@
       "total": 0,
       "lunchParty": [],
       "lastLunch": ""
+    },
+    {
+      "id": "f347",
+      "username": "ㅇㅇㅇ",
+      "password": "1111",
+      "class": 15,
+      "mode": "",
+      "total": -6300,
+      "lunchParty": [],
+      "lastLunch": ""
     }
   ],
   "lunchParty": [
@@ -41,5 +51,16 @@
     }
   ],
   "restaurant": [],
-  "foodFinance": []
+  "finance": [
+    {
+      "id": "0af3",
+      "userId": "f347",
+      "type": "OUTPUT",
+      "date": "2025-04-08",
+      "amount": 6300,
+      "foodType": "KOREAN",
+      "food": "뚝불",
+      "description": "학식"
+    }
+  ]
 }
