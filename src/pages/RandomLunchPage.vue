@@ -366,7 +366,21 @@ function selectFood() {
 }
 
 /* animate-pointer 클래스가 추가되면 bounce 애니메이션 실행 */
+.animate-pointer {
   animation: bounce 2s infinite ease-in-out;
+}
+
+/* bounce 애니메이션 키프레임: 위로 0.4cm 이동 후 다시 원위치 */
+@keyframes bounce {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-0.4cm);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .controls {
