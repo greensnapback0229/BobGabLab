@@ -15,8 +15,8 @@
 
     <div class="container py-5 d-flex flex-column flex-grow-1">
       <!-- 요약 카드 -->
-      <div class="row text-center mb-4">
-        <div class="col-md-4">
+      <div class="row text-center mb-4 g-3">
+        <div class="col-12 col-md-4">
           <div class="summary-card border-success text-success">
             <div class="summary-title">총 수입</div>
             <div class="summary-amount">
@@ -24,7 +24,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
           <div class="summary-card border-danger text-danger">
             <div class="summary-title">총 지출</div>
             <div class="summary-amount">
@@ -32,7 +32,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
           <div class="summary-card border-primary text-primary">
             <div class="summary-title">총 수익</div>
             <div class="summary-amount">
@@ -42,35 +42,62 @@
         </div>
       </div>
 
-      <!-- 최근 거래 내역 -->
-      <div class="mt-5">
-        <h4 class="text-start mb-3">📋 최근 거래 내역</h4>
-        <div class="d-flex flex-column align-items-start gap-2">
-          <div
-            v-for="item in recentFinances"
-            :key="item.id"
-            class="recent-card p-2 rounded border bg-white shadow-sm"
-          >
-            <div class="d-flex justify-content-between mb-1">
-              <span class="fw-bold">{{ formatDate(item.date) }}</span>
-              <span
-                :class="item.type === 'INPUT' ? 'text-success' : 'text-danger'"
-              >
-                {{ item.type === 'INPUT' ? '수입' : '지출' }}
-              </span>
-            </div>
+      <!-- 최근 거래 내역 + 최근 파티 목록 -->
+      <div class="row mt-4 g-4">
+        <!-- 최근 거래 내역 -->
+        <div class="col-12 col-lg-6">
+          <h4 class="text-start mb-3">📋 최근 거래 내역</h4>
+          <div class="d-flex flex-column gap-3">
+            <div
+              v-for="item in recentFinances"
+              :key="item.id"
+              class="recent-card p-3 rounded border bg-white shadow-sm"
+            >
+              <div class="d-flex justify-content-between mb-1">
+                <span class="fw-bold">{{ formatDate(item.date) }}</span>
+                <span
+                  :class="
+                    item.type === 'INPUT' ? 'text-success' : 'text-danger'
+                  "
+                >
+                  {{ item.type === 'INPUT' ? '수입' : '지출' }}
+                </span>
+              </div>
 
-            <!-- 음식 정보는 지출일 경우에만 표시 -->
-            <div v-if="item.type === 'OUTPUT'">
-              <strong>음식:</strong> {{ item.food }} ({{
-                formatFoodType(item.foodType)
-              }})
-            </div>
+              <div v-if="item.type === 'OUTPUT'">
+                <strong>음식:</strong> {{ item.food }} ({{
+                  formatFoodType(item.foodType)
+                }})
+              </div>
 
-            <div>
-              <strong>금액:</strong> {{ item.amount.toLocaleString() }}원
+              <div>
+                <strong>금액:</strong> {{ item.amount.toLocaleString() }}원
+              </div>
+              <div><strong>메모:</strong> {{ item.description || '-' }}</div>
             </div>
-            <div><strong>메모:</strong> {{ item.description || '-' }}</div>
+          </div>
+        </div>
+
+        <!-- 최근 파티 목록 -->
+        <div class="col-12 col-lg-6">
+          <h4 class="text-start mb-3">🎉 최근 파티 목록</h4>
+          <div class="d-flex flex-column gap-3">
+            <div
+              v-for="party in recentParties"
+              :key="party.id"
+              class="recent-card p-3 rounded border bg-white shadow-sm"
+            >
+              <div class="d-flex justify-content-between mb-1">
+                <span class="fw-bold">{{ party.title }}</span>
+                <span class="text-muted">{{
+                  formatPromiseTime(party.promiseTime)
+                }}</span>
+              </div>
+              <div><strong>장소:</strong> {{ party.location }}</div>
+              <div>
+                <strong>참여자:</strong> {{ party.participation.length }}명
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -85,8 +112,9 @@ import { useAuthStore } from '@/stores/auth';
 
 const financeStore = useFinanceStore();
 const authStore = useAuthStore();
+const recentParties = ref([]);
 
-// 배너 이미지
+// 배너 이미지 로딩
 const banners = [
   new URL('@/assets/banners/banner1.jpg', import.meta.url).href,
   new URL('@/assets/banners/banner2.jpg', import.meta.url).href,
@@ -97,25 +125,22 @@ onMounted(() => {
   selectedBanner.value = banners[Math.floor(Math.random() * banners.length)];
 });
 
-// 거래 내역 불러오기
+// 거래 내역과 파티 불러오기
 onMounted(async () => {
   const userId = authStore.user?.id || localStorage.getItem('userId');
   if (userId) {
     await financeStore.loadFinances(userId);
+    await loadRecentParties();
   }
 });
 
-// 현재 달 시작/끝 계산
 const getStartAndEndOfCurrentMonth = () => {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const start = new Date(year, month, 1);
-  const end = new Date(year, month + 1, 0);
+  const start = new Date(now.getFullYear(), now.getMonth(), 1);
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   return { start, end };
 };
 
-// 이번 달 거래 필터링
 const currentMonthFinances = computed(() => {
   const { start, end } = getStartAndEndOfCurrentMonth();
   return financeStore.finances.filter((item) => {
@@ -124,7 +149,6 @@ const currentMonthFinances = computed(() => {
   });
 });
 
-// 통계
 const totalInput = computed(() =>
   currentMonthFinances.value
     .filter((item) => item.type === 'INPUT')
@@ -137,23 +161,17 @@ const totalOutput = computed(() =>
 );
 const totalProfit = computed(() => totalInput.value - totalOutput.value);
 
-// 최근 거래 2건
 const recentFinances = computed(() => {
   return [...financeStore.finances]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 2);
 });
 
-// 날짜 포맷
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
-  return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(
-    2,
-    '0'
-  )}월 ${String(date.getDate()).padStart(2, '0')}일`;
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 };
 
-// 음식 종류 포맷
 const formatFoodType = (value) => {
   return (
     {
@@ -164,14 +182,39 @@ const formatFoodType = (value) => {
     }[value] || value
   );
 };
+
+const loadRecentParties = async () => {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+
+    const res = await fetch(`http://localhost:3000/user/${userId}`);
+    const user = await res.json();
+
+    const partyIds = user.lunchParty || [];
+    const lastTwoIds = partyIds.slice(-2);
+
+    const partyPromises = lastTwoIds.map((id) =>
+      fetch(`http://localhost:3000/lunchParty/${id}`).then((res) => res.json())
+    );
+
+    recentParties.value = await Promise.all(partyPromises);
+  } catch (err) {
+    console.error('최근 파티 불러오기 실패:', err);
+  }
+};
+
+const formatPromiseTime = (dateStr) => {
+  const date = new Date(dateStr);
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  return `${date.getMonth() + 1}월 ${date.getDate()}일 ${hour}:${minute}`;
+};
 </script>
 
 <style scoped>
 .banner-wrapper {
   width: 100%;
-  position: relative;
-  top: 0;
-  left: 0;
   overflow: hidden;
 }
 .banner-img {
@@ -189,23 +232,23 @@ const formatFoodType = (value) => {
 .summary-card {
   border: 2px solid;
   border-radius: 10px;
-  padding: 12px 8px;
+  padding: 16px 12px;
   background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-height: 90px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  min-height: 100px;
 }
+
 .summary-title {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .summary-amount {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: bold;
 }
 
 .recent-card {
-  width: 50%;
-  min-width: 280px;
+  width: 100%;
 }
 </style>
