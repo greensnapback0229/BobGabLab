@@ -92,12 +92,26 @@ const handleJoin = async () => {
   const updatedParticipants = [...party.value.participation, userId];
 
   try {
+    // ✅ 1. lunchParty 참여 업데이트
     await axios.patch(`http://localhost:3000/lunchParty/${partyId}`, {
       participation: updatedParticipants,
     });
 
     party.value.participation = updatedParticipants;
     await fetchParticipants();
+
+    // ✅ 2. user 정보 가져오기
+    const userRes = await axios.get(`http://localhost:3000/user/${userId}`);
+    const user = userRes.data;
+
+    // ✅ 3. lunchParty 배열 업데이트 + lastLunch 설정
+    const updatedUser = {
+      lunchParty: [...(user.lunchParty || []), Number(partyId)],
+      lastLunch: Number(partyId),
+    };
+
+    // ✅ 4. user 정보 PATCH 요청
+    await axios.patch(`http://localhost:3000/user/${userId}`, updatedUser);
 
     alert('참여 완료!');
   } catch (err) {

@@ -15,6 +15,9 @@ coverage
 *.local
 
 db.json
+./db.json
+/db.json
+
 /cypress/videos/
 /cypress/screenshots/
 /db.json
