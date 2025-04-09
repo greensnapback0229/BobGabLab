@@ -38,8 +38,14 @@ const router = createRouter({
       component: () => import('@/pages/party/PartyListPage.vue'),
     },
     {
-      path: '/party/register',
+      path: '/party/register/:food_name',
       name: 'partyRegister',
+      component: () => import('@/pages/party/PartyRegisterPage.vue'),
+    },
+
+    {
+      path: '/party/register',
+      name: 'partyRegister2',
       component: () => import('@/pages/party/PartyRegisterPage.vue'),
     },
     {
@@ -62,6 +68,11 @@ const router = createRouter({
       path: '/random',
       name: 'random',
       component: () => import('@/pages/RandomLunchPage.vue'),
+    },
+    {
+      path: '/party/details/:party_id',
+      name: 'PartyDetails',
+      component: () => import('@/pages/party/PartyDetailPage.vue'),
     },
   ],
 });

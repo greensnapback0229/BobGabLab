@@ -8,7 +8,9 @@
     <!-- Table -->
     <div class="container">
       <div class="d-flex justify-content-end mb-2">
-        <button class="btn btn-outline-success">등록</button>
+        <router-link to="/party/register">
+          <button class="btn btn-outline-success">등록</button>
+        </router-link>
       </div>
       <table class="table table-bordered table-hover align-middle text-center">
         <thead class="table-light">
@@ -22,22 +24,12 @@
         <tbody>
           <tr v-for="(party, index) in parties" :key="index">
             <td>{{ party.no }}</td>
-            <td
-              class="text-start"
-              :class="{ 'text-success fw-semibold': party.highlight }"
-            >
-              <a
-                v-if="party.link"
-                :href="party.link"
-                class="text-decoration-none text-success"
-              >
+            <td class="text-start">
+              <a :href="party.link" class="text-decoration-none text-dark">
                 {{ party.title }}
               </a>
-              <span v-else>
-                <a href="">{{ party.title }}</a>
-              </span>
             </td>
-            <td>{{ party.date }}<br />{{ party.time }}</td>
+            <td>{{ party.date }} - {{ party.time }}</td>
             <td>{{ party.posted }}</td>
           </tr>
         </tbody>
@@ -84,12 +76,12 @@ export default {
 
         return {
           no: index + 1,
-          title: party.location,
+          title: party.title,
           date: promise.format('YYYY-MM-DD'),
           time: promise.format('HH:mm'),
           posted,
           highlight: index === 0, // 첫 번째 항목만 강조 표시
-          link: index === 0 ? `/party/details/${party.id}` : null, // 클릭 가능 링크 예시
+          link: `/party/details/${party.id}`,
         };
       });
     } catch (err) {
