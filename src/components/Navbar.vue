@@ -39,16 +39,28 @@
         </li>
       </ul>
 
-      <!-- 등록하기 버튼 -->
-      <router-link to="/finance/register" class="btn custom-register-btn">
-        + 등록하기
-      </router-link>
+      <!-- 등록하기 + 로그아웃 버튼 -->
+      <div class="d-flex align-items-center gap-2">
+        <router-link to="/finance/register" class="btn custom-register-btn">
+          + 등록하기
+        </router-link>
+        <button class="btn logout-btn" @click="handleLogout">로그아웃</button>
+      </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-// 없음
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleLogout = () => {
+  authStore.logout();
+  router.push('/login');
+};
 </script>
 
 <style scoped>
