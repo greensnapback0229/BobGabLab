@@ -366,21 +366,7 @@ function selectFood() {
 }
 
 /* animate-pointer 클래스가 추가되면 bounce 애니메이션 실행 */
-.animate-pointer {
   animation: bounce 2s infinite ease-in-out;
-}
-
-/* bounce 애니메이션 키프레임: 위로 0.3cm 이동 후 다시 원위치 */
-@keyframes bounce {
-  0% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(-0.4cm);
-  }
-  100% {
-    transform: translateX(-50%) translateY(0);
-  }
 }
 
 .controls {
@@ -395,6 +381,13 @@ function selectFood() {
   border: none;
   cursor: pointer;
   border-radius: 8px;
+  /* 0.3초에 걸쳐 배경색 변화 */
+  transition: background-color 0.3s ease;
+}
+
+/* 활성(Enabled) 상태의 버튼에만 hover 시 배경색 변경 */
+.controls button:enabled:hover {
+  background-color: #003d0f;
 }
 
 .controls button.rotating,
