@@ -4,8 +4,11 @@
   </div>
   <div class="party-details">
     <p><strong>제목:</strong> {{ party.title }}</p>
-    <p><strong>주최자:</strong> {{ party.owner }}</p>
-    <p><strong>약속 장소:</strong> {{ party.location }}</p>
+    <p v-if="participants[0]">
+      <strong>주최자:</strong> {{ participants[0].username }}
+    </p>
+
+    <p><strong>음식:</strong> {{ party.location }}</p>
     <p><strong>약속 시간:</strong> {{ formattedTime }}</p>
     <p><strong>참여자 수:</strong> {{ participants.length }}명</p>
 
@@ -14,6 +17,10 @@
         {{ user.username }}
       </li>
     </ul>
+  </div>
+  <!-- 참여하기 버튼 -->
+  <div class="text-center mt-4">
+    <button class="btn btn-success" @click="handleJoin">참여하기</button>
   </div>
 </template>
 
@@ -53,8 +60,10 @@ const fetchParticipants = async () => {
   }
 };
 
+// ✅ 여기서 mount 시 실행
 onMounted(fetchParty);
 
+// ✅ 약속시간 포맷
 const formattedTime = computed(() => {
   if (!party.value.promiseTime) return '';
   const date = new Date(party.value.promiseTime);
@@ -66,6 +75,36 @@ const formattedTime = computed(() => {
     minute: '2-digit',
   });
 });
+
+// ✅ 참여하기 버튼
+const handleJoin = async () => {
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    alert('로그인이 필요합니다!');
+    return;
+  }
+
+  if (party.value.participation.includes(userId)) {
+    alert('이미 참여한 파티입니다!');
+    return;
+  }
+
+  const updatedParticipants = [...party.value.participation, userId];
+
+  try {
+    await axios.patch(`http://localhost:3000/lunchParty/${partyId}`, {
+      participation: updatedParticipants,
+    });
+
+    party.value.participation = updatedParticipants;
+    await fetchParticipants();
+
+    alert('참여 완료!');
+  } catch (err) {
+    console.error('참여 중 오류 발생:', err);
+    alert('참여 중 문제가 발생했습니다.');
+  }
+};
 </script>
 
 <style scoped>
