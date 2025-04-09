@@ -4,7 +4,7 @@
       class="container-fluid d-flex align-items-center justify-content-between"
     >
       <!-- 로고 (텍스트 제거됨) -->
-      <router-link to="/home" class="navbar-brand me-4">
+      <router-link to="/" class="navbar-brand me-4">
         <img src="@/components/icons/logo1.png" alt="로고" height="36" />
       </router-link>
 
@@ -14,7 +14,10 @@
         style="gap: 5rem"
       >
         <li class="nav-item">
-          <router-link to="/history" class="nav-link d-flex align-items-center">
+          <router-link
+            to="/finance/list"
+            class="nav-link d-flex align-items-center"
+          >
             <img src="@/components/icons/nav/list.png" alt="list" />
             <i class="fas fa-list me-1"></i> 거래 내역
           </router-link>
@@ -36,16 +39,28 @@
         </li>
       </ul>
 
-      <!-- 등록하기 버튼 -->
-      <router-link to="/add" class="btn custom-register-btn">
-        + 등록하기
-      </router-link>
+      <!-- 등록하기 + 로그아웃 버튼 -->
+      <div class="d-flex align-items-center gap-2">
+        <router-link to="/finance/register" class="btn custom-register-btn">
+          + 등록하기
+        </router-link>
+        <button class="btn logout-btn" @click="handleLogout">로그아웃</button>
+      </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-// 없음
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleLogout = () => {
+  authStore.logout();
+  window.location.replace('/login');
+};
 </script>
 
 <style scoped>

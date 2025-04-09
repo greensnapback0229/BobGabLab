@@ -1,10 +1,10 @@
 <template>
-  <section class="home-page min-vh-100">
+  <section class="random-lunch-page min-vh-100">
     <h2>오늘의 점심 메뉴는?</h2>
 
     <!-- 회전 컨테이너 -->
     <div class="roulette-container">
-      <!-- 타원 궤도 상에 배치된 항목들 (현재는 텍스트만 표시) -->
+      <!-- 타원 궤도 상에 배치된 항목들 -->
       <div
         v-for="(item, idx) in items"
         :key="idx"
@@ -17,11 +17,11 @@
         </div>
       </div>
 
-      <!-- 빨간색 포인터 (타원 하단에서 2cm 아래로 지정) -->
-      <div class="pointer"></div>
+      <!-- 빨간색 포인터: 추첨 전에는 정지, 선택 후에만 animate-pointer 클래스가 추가되어 움직임 -->
+      <div class="pointer" :class="{ 'animate-pointer': selectedItem }"></div>
     </div>
 
-    <!-- 회전 시작 버튼 -->
+    <!-- 컨트롤 버튼 영역 -->
     <div class="controls">
       <button
         @click="startRotation"
@@ -30,9 +30,18 @@
       >
         추첨
       </button>
+      <!-- 선택 버튼: 아직 추첨하지 않았으면 disabled, 회색 스타일 -->
+      <button
+        @click="selectFood"
+        :disabled="!selectedItem"
+        :class="{ 'disabled-btn': !selectedItem }"
+        style="margin-left: 1cm"
+      >
+        선택
+      </button>
     </div>
 
-    <!-- 결과 (텍스트는 1cm 아래로 배치) -->
+    <!-- 결과: 선택된 음식 표시 -->
     <div class="result" v-if="selectedItem">
       오늘의 점심 메뉴는 <strong>{{ selectedItem.name }}</strong> 입니다!
     </div>
@@ -41,12 +50,12 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-/**
- * 항목 목록 – 현재는 이름(텍스트)만 사용하지만, 추후 사진을 삽입할 수 있도록 src 필드도 유지함
- */
+const router = useRouter();
+
+// 항목 목록 – 이미지 경로(src) 포함(이미지는 추후 사용)
 const items = [
-  // 원래 항목 6개
   {
     name: '김치찌개',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
@@ -71,8 +80,6 @@ const items = [
     name: '된장찌개',
     src: new URL('@/assets/images/food6.png', import.meta.url).href,
   },
-
-  // 추가된 항목 30개 예시 (여기서는 일부만 나열)
   {
     name: '불고기',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
@@ -86,7 +93,7 @@ const items = [
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
   },
   {
-    name: '잡채',
+    name: '순쫄',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
   },
   {
@@ -105,7 +112,6 @@ const items = [
     name: '떡볶이',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
   },
-  // 중식 (7개)
   {
     name: '짜장면',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
@@ -134,7 +140,6 @@ const items = [
     name: '군만두',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
   },
-  // 양식 (8개)
   {
     name: '스파게티',
     src: new URL('@/assets/images/food3.png', import.meta.url).href,
@@ -167,9 +172,8 @@ const items = [
     name: '치즈플래터',
     src: new URL('@/assets/images/food3.png', import.meta.url).href,
   },
-  // 일식 (7개)
   {
-    name: '초밥',
+    name: '따연초',
     src: new URL('@/assets/images/food4.png', import.meta.url).href,
   },
   {
@@ -202,7 +206,7 @@ const currentRotation = ref(0);
 const isRotating = ref(false);
 const selectedItem = ref(null);
 let animationFrame = null;
-const rotationDuration = Math.floor(2500 + Math.random() * 1001);
+const rotationDuration = Math.floor(3000 + Math.random() * 1001);
 let startTime = null;
 
 const rx = 350;
@@ -300,17 +304,28 @@ function determineSelectedItem() {
   const finalRotation = 90 - (angleStep * chosenIndex - 90);
   currentRotation.value = finalRotation;
 }
+
+// 선택 버튼 클릭 시, 선택된 음식 이름을 URL 경로에 포함하여 이동
+function selectFood() {
+  if (!selectedItem.value) return;
+  const selectedFoodName = encodeURIComponent(selectedItem.value.name);
+  router.push(`/party/register/${selectedFoodName}`);
+}
 </script>
 
 <style scoped>
-.home-page {
+.random-lunch-page {
   text-align: center;
   padding: 2rem;
   background-color: #faf8f3;
+  /* 전체 콘텐츠를 1cm 아래로 이동 */
+  padding-top: calc(2rem + 0.7cm);
 }
 
-.home-page h2 {
+.random-lunch-page h2 {
   color: #003d0f;
+  /* 제목을 0.5cm 아래로 이동 */
+  margin-top: 0.5cm;
 }
 
 .roulette-container {
@@ -337,9 +352,10 @@ function determineSelectedItem() {
   color: #003d0f;
 }
 
+/* 기본 포인터: 애니메이션이 적용되지 않은 상태 */
 .pointer {
   position: absolute;
-  top: calc(50% + 80px + 2cm);
+  top: calc(50% + 80px + 2.2cm);
   left: 50%;
   transform: translateX(-50%);
   width: 0;
@@ -349,31 +365,61 @@ function determineSelectedItem() {
   border-bottom: 25px solid red;
 }
 
+/* animate-pointer 클래스가 추가되면 bounce 애니메이션 실행 */
+.animate-pointer {
+  animation: bounce 2s infinite ease-in-out;
+}
+
+/* bounce 애니메이션 키프레임: 위로 0.4cm 이동 후 다시 원위치 */
+@keyframes bounce {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-0.4cm);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.controls {
+  margin-top: calc(1rem + 0.5cm);
+}
+
 .controls button {
-  margin: 1rem;
+  margin: 0.5rem;
   padding: 8px 16px;
   background-color: #71b548;
   color: #fff;
   border: none;
   cursor: pointer;
   border-radius: 8px;
+  /* 0.3초에 걸쳐 배경색 변화 */
+  transition: background-color 0.3s ease;
 }
 
-.controls button.rotating {
+/* 활성(Enabled) 상태의 버튼에만 hover 시 배경색 변경 */
+.controls button:enabled:hover {
+  background-color: #003d0f;
+}
+
+.controls button.rotating,
+.controls button.disabled-btn {
   background-color: #ccc;
   cursor: default;
 }
 
-.result {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-}
-
-/* 선택된 항목에 대한 스타일: 원 테두리 및 글씨 두껍게 */
 .roulette-item.selected {
   border: 3px solid #71b548;
 }
+
 .roulette-item.selected .food-text {
   font-weight: bold;
+}
+
+.result {
+  margin-top: 1rem;
+  font-size: 1.7rem;
 }
 </style>
