@@ -4,7 +4,7 @@
       class="container-fluid d-flex align-items-center justify-content-between"
     >
       <!-- 로고 (텍스트 제거됨) -->
-      <router-link to="/home" class="navbar-brand me-4">
+      <router-link to="/" class="navbar-brand me-4">
         <img src="@/components/icons/logo1.png" alt="로고" height="36" />
       </router-link>
 

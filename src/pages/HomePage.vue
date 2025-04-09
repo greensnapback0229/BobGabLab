@@ -1,5 +1,15 @@
 <template>
-  <div class="finance-home d-flex flex-column">
+  <div class="finance-home d-flex flex-column div-custom-beige min-vh-100 py-1 px-3">
+  <!-- 배너 -->
+    <div class="banner-wrapper">
+      <RouterLink to="/random">
+        <img
+          :src="selectedBanner"
+          alt="배너"
+          class="banner-img img-fluid w-100 shadow"
+        />
+      </RouterLink>
+      </div>
     <div class="container py-4 d-flex flex-column flex-grow-1">
       <!-- 제목 -->
       <h2 class="text-center text-dark fw-bold mb-4">📊 이번 달 가계부 요약</h2>
@@ -73,6 +83,19 @@ import { useAuthStore } from '@/stores/auth';
 const financeStore = useFinanceStore();
 const authStore = useAuthStore();
 
+const banners = [
+  new URL('@/assets/banners/banner1.jpg', import.meta.url).href,
+  new URL('@/assets/banners/banner2.jpg', import.meta.url).href,
+  new URL('@/assets/banners/banner3.jpg', import.meta.url).href,
+];
+
+const selectedBanner = ref('');
+
+onMounted(() => {
+  // 무작위 배너 선택
+  selectedBanner.value = banners[Math.floor(Math.random() * banners.length)];
+});
+
 // 페이지 진입 시 사용자 거래 내역 불러오기
 onMounted(async () => {
   const userId = authStore.user?.id || localStorage.getItem('userId');
@@ -145,6 +168,21 @@ const formatFoodType = (value) => {
 </script>
 
 <style scoped>
+.banner-wrapper {
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.banner-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
 .finance-home {
   background-color: #f3f5f9;
   min-height: 100vh;
