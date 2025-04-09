@@ -45,7 +45,8 @@
           />
         </div>
 
-        <div class="mb-3">
+        <!-- 음식 관련 항목은 지출일 때만 표시 -->
+        <div class="mb-3" v-if="form.type === 'OUTPUT'">
           <label>음식 종류</label>
           <div class="d-flex justify-content-center gap-2">
             <button
@@ -61,14 +62,14 @@
           </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" v-if="form.type === 'OUTPUT'">
           <label for="food">음식 이름</label>
           <input
             v-model="form.food"
             type="text"
             id="food"
             class="form-control form-input"
-            required
+            :required="form.type === 'OUTPUT'"
           />
         </div>
 
@@ -101,7 +102,7 @@ const router = useRouter();
 const financeStore = useFinanceStore();
 
 const form = ref({
-  type: 'OUTPUT',
+  type: 'OUTPUT', // 기본은 지출
   date: '',
   amount: '',
   foodType: 'KOREAN',
@@ -118,7 +119,10 @@ const foodTypes = [
 
 const submitFinance = async () => {
   const userId = localStorage.getItem('userId');
-  if (!userId) return alert('로그인이 필요합니다.');
+  if (!userId) {
+    alert('로그인이 필요합니다.');
+    return;
+  }
 
   const newFinance = {
     userId,
@@ -129,6 +133,8 @@ const submitFinance = async () => {
     food: form.value.food,
     description: form.value.description,
   };
+
+  console.log('보낼 financeData:', newFinance); // ✅ 여기에 추가
 
   const success = await financeStore.addFinance(newFinance);
 
@@ -198,7 +204,7 @@ const submitFinance = async () => {
   border: 2px solid #71b548 !important;
   color: #71b548 !important;
   background-color: transparent;
-  width: 70px; /* ✅ 너비 줄이기 */
+  width: 70px;
   min-width: 60px;
   padding: 8px 0;
   transition: background-color 0.3s ease, color 0.3s ease;
