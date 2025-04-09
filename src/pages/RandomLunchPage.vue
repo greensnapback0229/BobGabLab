@@ -80,8 +80,6 @@ const items = [
     name: '된장찌개',
     src: new URL('@/assets/images/food6.png', import.meta.url).href,
   },
-
-  // 추가 항목 예시
   {
     name: '불고기',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
@@ -114,7 +112,6 @@ const items = [
     name: '떡볶이',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
   },
-  // 중식 예시
   {
     name: '짜장면',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
@@ -143,7 +140,6 @@ const items = [
     name: '군만두',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
   },
-  // 양식 예시
   {
     name: '스파게티',
     src: new URL('@/assets/images/food3.png', import.meta.url).href,
@@ -176,7 +172,6 @@ const items = [
     name: '치즈플래터',
     src: new URL('@/assets/images/food3.png', import.meta.url).href,
   },
-  // 일식 예시
   {
     name: '따연초',
     src: new URL('@/assets/images/food4.png', import.meta.url).href,
@@ -211,17 +206,14 @@ const currentRotation = ref(0);
 const isRotating = ref(false);
 const selectedItem = ref(null);
 let animationFrame = null;
-// 회전 시간: 3000 ~ 4000ms 랜덤 설정
 const rotationDuration = Math.floor(3000 + Math.random() * 1001);
 let startTime = null;
 
-// 타원 궤도 관련 상수
 const rx = 350;
 const ry = 80;
 const minScale = 0.5;
 const maxScale = 1.2;
 
-// 각 항목에 대한 스타일 계산 (각도, 좌표, 크기 조정)
 function getItemStyle(index) {
   const total = items.length;
   const angleStep = 360 / total;
@@ -231,7 +223,6 @@ function getItemStyle(index) {
   const x = rx * Math.cos(rad);
   const y = ry * Math.sin(rad);
 
-  // 중앙(90도)와의 각 차이로 크기 조절
   let diff = Math.abs(effectiveAngle - 90);
   diff = diff % 360;
   if (diff > 180) diff = 360 - diff;
@@ -310,19 +301,17 @@ function determineSelectedItem() {
     }
   }
   selectedItem.value = items[chosenIndex];
-
-  // 회전 멈춘 후 중앙 정렬을 위한 보정
   const finalRotation = 90 - (angleStep * chosenIndex - 90);
   currentRotation.value = finalRotation;
 }
 
-// 선택 버튼 클릭 시 /party/register 페이지로 이동하면서 선택된 음식 전달
+// 선택 버튼 클릭 시, 선택된 음식 이름을 URL 경로에 포함하여 이동
 function selectFood() {
   if (!selectedItem.value) return;
-
-  // 선택된 음식 이름을 URL 인코딩 후 쿼리 파라미터로 전달
+  // 원래 값은 URL 인코딩 처리가 자동으로 이루어지므로, 직접 인코딩할 필요 없이 사용하거나,
+  // 만약 인코딩을 원한다면 아래와 같이 적용할 수 있습니다.
   const selectedFoodName = encodeURIComponent(selectedItem.value.name);
-  router.push({ path: '/party/register', query: { food: selectedFoodName } });
+  router.push(`/party/register/${selectedFoodName}`);
 }
 </script>
 
@@ -387,17 +376,16 @@ function selectFood() {
   border-radius: 8px;
 }
 
-/* 추첨 중이거나 선택할 수 없는 경우의 버튼 스타일 */
 .controls button.rotating,
 .controls button.disabled-btn {
   background-color: #ccc;
   cursor: default;
 }
 
-/* 선택된 항목 스타일 */
 .roulette-item.selected {
   border: 3px solid #71b548;
 }
+
 .roulette-item.selected .food-text {
   font-weight: bold;
 }
