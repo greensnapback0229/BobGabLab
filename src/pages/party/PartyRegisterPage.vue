@@ -104,7 +104,7 @@ const registerParty = async () => {
     const partyId = createdParty.id;
 
     // ✅ 2. 유저 정보 가져오기
-    const userRes = await axios.get(`http://localhost:3000/users/${userId}`);
+    const userRes = await axios.get(`http://localhost:3000/user/${userId}`);
     const user = userRes.data;
 
     // ✅ 3. lunchParty 배열에 추가, lastLunch 설정
@@ -115,7 +115,7 @@ const registerParty = async () => {
     };
 
     // ✅ 4. 유저 정보 업데이트
-    await axios.put(`http://localhost:3000/users/${userId}`, updatedUser);
+    await axios.put(`http://localhost:3000/user/${userId}`, updatedUser);
 
     alert('파티가 등록되었습니다!');
     console.log('파티:', createdParty);
