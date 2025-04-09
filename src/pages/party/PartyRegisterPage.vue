@@ -49,9 +49,14 @@
     </form>
   </div>
 </template>
+
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 const title = ref('');
 const day = ref('오늘');
@@ -60,22 +65,25 @@ const minute = ref('00분'); // ex: "00분"
 const place = ref('');
 const description = ref('');
 
-const userId = 'user-1'; // 임시 고정
+const userId = localStorage.getItem('userId') || ''; // 없으면 빈 문자열
+
+// ✅ 파라미터가 있을 경우에만 자동 입력
+onMounted(() => {
+  const foodName = route.params.food_name;
+  if (foodName) {
+    place.value = foodName;
+  }
+});
 
 const registerParty = async () => {
-  // 날짜 계산
   const today = new Date();
   if (day.value === '내일') today.setDate(today.getDate() + 1);
 
-  // ✅ '시', '분' 제거 후 padStart로 포맷 맞춤
   const rawHour = hour.value.replace('시', '');
   const rawMinute = minute.value.replace('분', '');
 
   const h = rawHour.toString().padStart(2, '0');
   const m = rawMinute.toString().padStart(2, '0');
-
-  console.log('hour:', h);
-  console.log('minute:', m);
 
   const isoTime = new Date(
     `${today.toISOString().split('T')[0]}T${h}:${m}:00`
