@@ -57,6 +57,10 @@ const router = createRouter({
       name: 'FinanceEdit',
       component: () => import('@/pages/FinanceEditPage.vue'),
       meta: { requiresAuth: true },
+    {
+      path: '/random',
+      name: 'random',
+      component: () => import('@/pages/RandomLunchPage.vue'),
     },
   ],
 });
