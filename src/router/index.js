@@ -5,9 +5,9 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
-      component: HomeView,
+      component: () => import('../pages/HomePage.vue'),
     },
     {
       path: '/about',
@@ -47,7 +47,16 @@ const router = createRouter({
       name: 'financeRegister',
       component: () => import('@/pages/FinanceRegisterPage.vue'),
     },
-
+    {
+      path: '/finance/list',
+      name: 'financeList',
+      component: () => import('@/pages/FinanceListPage.vue'),
+    },
+    {
+      path: '/finance/edit/:id',
+      name: 'FinanceEdit',
+      component: () => import('@/pages/FinanceEditPage.vue'),
+      meta: { requiresAuth: true },
     {
       path: '/random',
       name: 'random',
