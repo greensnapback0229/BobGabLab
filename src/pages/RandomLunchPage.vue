@@ -1,10 +1,10 @@
 <template>
-  <section class="home-page min-vh-100">
+  <section class="random-lunch-page min-vh-100">
     <h2>오늘의 점심 메뉴는?</h2>
 
     <!-- 회전 컨테이너 -->
     <div class="roulette-container">
-      <!-- 타원 궤도 상에 배치된 항목들 (현재는 텍스트만 표시) -->
+      <!-- 타원 궤도 상에 배치된 항목들 -->
       <div
         v-for="(item, idx) in items"
         :key="idx"
@@ -17,11 +17,11 @@
         </div>
       </div>
 
-      <!-- 빨간색 포인터 (타원 하단에서 2cm 아래로 지정) -->
+      <!-- 빨간색 포인터 (타원 하단에서 2cm 아래) -->
       <div class="pointer"></div>
     </div>
 
-    <!-- 회전 시작 버튼 -->
+    <!-- 컨트롤 버튼 영역 -->
     <div class="controls">
       <button
         @click="startRotation"
@@ -30,23 +30,32 @@
       >
         추첨
       </button>
+      <!-- 선택 버튼: 아직 추첨하지 않았으면 disabled, 회색 스타일 -->
+      <button
+        @click="selectFood"
+        :disabled="!selectedItem"
+        :class="{ 'disabled-btn': !selectedItem }"
+        style="margin-left: 1cm"
+      >
+        선택
+      </button>
     </div>
 
-    <!-- 결과 (텍스트는 1cm 아래로 배치) -->
+    <!-- 결과: 선택된 음식 표시 (원하는 경우) -->
     <div class="result" v-if="selectedItem">
-      오늘의 점심 메뉴는 <strong>{{ selectedItem.name }}</strong> 입니다!
+      선택된 음식: <strong>{{ selectedItem.name }}</strong>
     </div>
   </section>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-/**
- * 항목 목록 – 현재는 이름(텍스트)만 사용하지만, 추후 사진을 삽입할 수 있도록 src 필드도 유지함
- */
+const router = useRouter();
+
+// 항목 목록 – 이미지 경로(src) 포함(이미지는 추후 사용)
 const items = [
-  // 원래 항목 6개
   {
     name: '김치찌개',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
@@ -72,7 +81,7 @@ const items = [
     src: new URL('@/assets/images/food6.png', import.meta.url).href,
   },
 
-  // 추가된 항목 30개 예시 (여기서는 일부만 나열)
+  // 추가 항목 예시
   {
     name: '불고기',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
@@ -86,7 +95,7 @@ const items = [
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
   },
   {
-    name: '잡채',
+    name: '순쫄',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
   },
   {
@@ -105,7 +114,7 @@ const items = [
     name: '떡볶이',
     src: new URL('@/assets/images/food1.png', import.meta.url).href,
   },
-  // 중식 (7개)
+  // 중식 예시
   {
     name: '짜장면',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
@@ -134,7 +143,7 @@ const items = [
     name: '군만두',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
   },
-  // 양식 (8개)
+  // 양식 예시
   {
     name: '스파게티',
     src: new URL('@/assets/images/food3.png', import.meta.url).href,
@@ -167,9 +176,9 @@ const items = [
     name: '치즈플래터',
     src: new URL('@/assets/images/food3.png', import.meta.url).href,
   },
-  // 일식 (7개)
+  // 일식 예시
   {
-    name: '초밥',
+    name: '따연초',
     src: new URL('@/assets/images/food4.png', import.meta.url).href,
   },
   {
@@ -202,14 +211,17 @@ const currentRotation = ref(0);
 const isRotating = ref(false);
 const selectedItem = ref(null);
 let animationFrame = null;
-const rotationDuration = Math.floor(2500 + Math.random() * 1001);
+// 회전 시간: 3000 ~ 4000ms 랜덤 설정
+const rotationDuration = Math.floor(3000 + Math.random() * 1001);
 let startTime = null;
 
+// 타원 궤도 관련 상수
 const rx = 350;
 const ry = 80;
 const minScale = 0.5;
 const maxScale = 1.2;
 
+// 각 항목에 대한 스타일 계산 (각도, 좌표, 크기 조정)
 function getItemStyle(index) {
   const total = items.length;
   const angleStep = 360 / total;
@@ -219,6 +231,7 @@ function getItemStyle(index) {
   const x = rx * Math.cos(rad);
   const y = ry * Math.sin(rad);
 
+  // 중앙(90도)와의 각 차이로 크기 조절
   let diff = Math.abs(effectiveAngle - 90);
   diff = diff % 360;
   if (diff > 180) diff = 360 - diff;
@@ -297,19 +310,30 @@ function determineSelectedItem() {
     }
   }
   selectedItem.value = items[chosenIndex];
+
+  // 회전 멈춘 후 중앙 정렬을 위한 보정
   const finalRotation = 90 - (angleStep * chosenIndex - 90);
   currentRotation.value = finalRotation;
+}
+
+// 선택 버튼 클릭 시 /party/register 페이지로 이동하면서 선택된 음식 전달
+function selectFood() {
+  if (!selectedItem.value) return;
+
+  // 선택된 음식 이름을 URL 인코딩 후 쿼리 파라미터로 전달
+  const selectedFoodName = encodeURIComponent(selectedItem.value.name);
+  router.push({ path: '/party/register', query: { food: selectedFoodName } });
 }
 </script>
 
 <style scoped>
-.home-page {
+.random-lunch-page {
   text-align: center;
   padding: 2rem;
   background-color: #faf8f3;
 }
 
-.home-page h2 {
+.random-lunch-page h2 {
   color: #003d0f;
 }
 
@@ -349,8 +373,12 @@ function determineSelectedItem() {
   border-bottom: 25px solid red;
 }
 
+.controls {
+  margin-top: 1rem;
+}
+
 .controls button {
-  margin: 1rem;
+  margin: 0.5rem;
   padding: 8px 16px;
   background-color: #71b548;
   color: #fff;
@@ -359,21 +387,23 @@ function determineSelectedItem() {
   border-radius: 8px;
 }
 
-.controls button.rotating {
+/* 추첨 중이거나 선택할 수 없는 경우의 버튼 스타일 */
+.controls button.rotating,
+.controls button.disabled-btn {
   background-color: #ccc;
   cursor: default;
 }
 
-.result {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-}
-
-/* 선택된 항목에 대한 스타일: 원 테두리 및 글씨 두껍게 */
+/* 선택된 항목 스타일 */
 .roulette-item.selected {
   border: 3px solid #71b548;
 }
 .roulette-item.selected .food-text {
   font-weight: bold;
+}
+
+.result {
+  margin-top: 1rem;
+  font-size: 1.2rem;
 }
 </style>
