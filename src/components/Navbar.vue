@@ -14,7 +14,10 @@
         style="gap: 5rem"
       >
         <li class="nav-item">
-          <router-link to="/history" class="nav-link d-flex align-items-center">
+          <router-link
+            to="/finance/list"
+            class="nav-link d-flex align-items-center"
+          >
             <img src="@/components/icons/nav/list.png" alt="list" />
             <i class="fas fa-list me-1"></i> 거래 내역
           </router-link>
@@ -37,7 +40,7 @@
       </ul>
 
       <!-- 등록하기 버튼 -->
-      <router-link to="/add" class="btn custom-register-btn">
+      <router-link to="/finance/register" class="btn custom-register-btn">
         + 등록하기
       </router-link>
     </div>

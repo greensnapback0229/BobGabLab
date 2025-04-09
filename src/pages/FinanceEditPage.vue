@@ -1,8 +1,8 @@
 <template>
   <div class="form-page">
     <div class="form-container">
-      <h2 class="costom_title">거래 내역 등록</h2>
-      <form @submit.prevent="submitFinance">
+      <h2 class="costom_title">거래 내역 수정</h2>
+      <form @submit.prevent="handleSubmit">
         <!-- 수입/지출 선택 버튼 -->
         <div class="d-flex justify-content-center mb-4">
           <button
@@ -37,9 +37,10 @@
         <div class="mb-3">
           <label for="amount">금액</label>
           <input
-            v-model="form.amount"
+            v-model.number="form.amount"
             type="number"
             id="amount"
+            min="1"
             class="form-control form-input"
             required
           />
@@ -47,7 +48,7 @@
 
         <div class="mb-3">
           <label>음식 종류</label>
-          <div class="d-flex justify-content-center gap-2">
+          <div class="d-flex justify-content-between flex-wrap">
             <button
               v-for="type in foodTypes"
               :key="type.value"
@@ -82,10 +83,10 @@
         </div>
 
         <div class="d-flex justify-content-center mt-4">
-          <button type="submit" class="btn btn-save me-2">저장</button>
-          <router-link to="/finance/list" class="btn btn-cancel"
-            >취소</router-link
-          >
+          <button type="submit" class="btn btn-save me-2">수정</button>
+          <button type="button" @click="cancel" class="btn btn-cancel">
+            취소
+          </button>
         </div>
       </form>
     </div>
@@ -93,20 +94,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
+
+import { useAuthStore } from '@/stores/auth';
 import { useFinanceStore } from '@/stores/finance';
 
+const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
 const financeStore = useFinanceStore();
 
 const form = ref({
-  type: 'OUTPUT',
   date: '',
-  amount: '',
   foodType: 'KOREAN',
   food: '',
+  amount: 0,
   description: '',
+  type: 'OUTPUT',
 });
 
 const foodTypes = [
@@ -116,29 +122,45 @@ const foodTypes = [
   { label: '기타', value: 'ETC' },
 ];
 
-const submitFinance = async () => {
-  const userId = localStorage.getItem('userId');
-  if (!userId) return alert('로그인이 필요합니다.');
+const financeId = route.params.id;
 
-  const newFinance = {
-    userId,
-    type: form.value.type,
-    date: form.value.date,
-    amount: parseFloat(form.value.amount),
-    foodType: form.value.foodType,
-    food: form.value.food,
-    description: form.value.description,
+onMounted(async () => {
+  const existing = await financeStore.finances.find((f) => f.id == financeId);
+  if (!existing) return alert('수정할 데이터를 찾을 수 없습니다.');
+
+  form.value = {
+    date: existing.date.slice(0, 10),
+    foodType: existing.foodType,
+    food: existing.food,
+    amount: existing.amount,
+    description: existing.description,
+    type: existing.type,
+  };
+});
+
+const handleSubmit = async () => {
+  if (!form.value.food || form.value.amount <= 0) {
+    alert('모든 항목을 입력하세요.');
+    return;
+  }
+
+  const updatedData = {
+    ...form.value,
+    userId: authStore.user?.id || localStorage.getItem('userId'),
+    date: new Date(form.value.date).toISOString(),
   };
 
-  const success = await financeStore.addFinance(newFinance);
-
-  if (success) {
-    await financeStore.loadFinances(userId);
+  try {
+    await axios.patch(`/api/finance/${financeId}`, updatedData);
+    await financeStore.loadFinances(updatedData.userId);
     router.push('/finance/list');
-  } else {
-    alert('거래 내역 저장에 실패했습니다. 다시 시도해주세요.');
+  } catch (err) {
+    console.error('수정 실패:', err);
+    alert('수정에 실패했습니다.');
   }
 };
+
+const cancel = () => router.push('/finance/list');
 </script>
 
 <style scoped>
@@ -198,9 +220,9 @@ const submitFinance = async () => {
   border: 2px solid #71b548 !important;
   color: #71b548 !important;
   background-color: transparent;
-  width: 70px; /* ✅ 너비 줄이기 */
-  min-width: 60px;
+  width: 80px;
   padding: 8px 0;
+  margin: 4px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
