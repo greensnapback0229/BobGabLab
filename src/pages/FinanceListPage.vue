@@ -6,7 +6,8 @@
       <!-- 필터 -->
       <div class="row g-2 mb-4">
         <div class="col-md-3">
-          <select class="form-select" v-model="filters.category">
+          <label for="category" class="form-label">음식 종류</label>
+          <select id="category" class="form-select" v-model="filters.category">
             <option value="">전체 음식 종류</option>
             <option value="KOREAN">한식</option>
             <option value="CHINESE">중식</option>
@@ -16,7 +17,8 @@
         </div>
 
         <div class="col-md-3">
-          <select class="form-select" v-model="filters.type">
+          <label for="type" class="form-label">수입 / 지출</label>
+          <select id="type" class="form-select" v-model="filters.type">
             <option value="">전체 타입</option>
             <option value="INPUT">수입</option>
             <option value="OUTPUT">지출</option>
@@ -24,10 +26,23 @@
         </div>
 
         <div class="col-md-3">
-          <input type="date" class="form-control" v-model="filters.startDate" />
+          <label for="start-date" class="form-label">조회 시작일</label>
+          <input
+            id="start-date"
+            type="date"
+            class="form-control"
+            v-model="filters.startDate"
+          />
         </div>
+
         <div class="col-md-3">
-          <input type="date" class="form-control" v-model="filters.endDate" />
+          <label for="end-date" class="form-label">조회 종료일</label>
+          <input
+            id="end-date"
+            type="date"
+            class="form-control"
+            v-model="filters.endDate"
+          />
         </div>
       </div>
 
@@ -103,7 +118,6 @@ const filters = ref({
   endDate: '',
 });
 
-// ✅ 경로 변경 감지해서 새로 불러오기
 watch(
   () => route.fullPath,
   async () => {
@@ -150,12 +164,18 @@ const formatFoodType = (value) => {
 const filteredFinances = computed(() => {
   return financeStore.finances.filter((item) => {
     const itemDate = item.date.split('T')[0];
-    if (filters.value.category && item.foodType !== filters.value.category)
+
+    if (
+      filters.value.category &&
+      (item.type !== 'OUTPUT' || item.foodType !== filters.value.category)
+    )
       return false;
+
     if (filters.value.type && item.type !== filters.value.type) return false;
     if (filters.value.startDate && itemDate < filters.value.startDate)
       return false;
     if (filters.value.endDate && itemDate > filters.value.endDate) return false;
+
     return true;
   });
 });
