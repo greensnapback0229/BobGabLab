@@ -4,7 +4,6 @@
 
     <!-- 회전 컨테이너 -->
     <div class="roulette-container">
-      <!-- 타원 궤도 상에 배치된 항목들 -->
       <div
         v-for="(item, idx) in items"
         :key="idx"
@@ -16,8 +15,6 @@
           <span class="food-text">{{ item.name }}</span>
         </div>
       </div>
-
-      <!-- 빨간색 포인터 (추첨 전에는 정지, 선택 후에만 animate-pointer 클래스가 추가되어 움직임) -->
       <div class="pointer" :class="{ 'animate-pointer': selectedItem }"></div>
     </div>
 
@@ -40,7 +37,7 @@
       </button>
     </div>
 
-    <!-- 결과 메시지: 컨트롤 버튼 영역 바로 아래에 배치 (margin-top을 0.7cm로 설정) -->
+    <!-- 결과 메시지 -->
     <div class="result" v-if="selectedItem">
       오늘의 점심 메뉴는 <strong>{{ selectedItem.name }}</strong> 입니다!
     </div>
@@ -50,13 +47,12 @@
       <div class="cards">
         <div
           class="card"
-          v-for="(restaurant, index) in recommendations"
+          v-for="(restaurant, index) in currentRecommendations"
           :key="index"
         >
           <img :src="restaurant.image" alt="추천 음식점 이미지" />
           <div class="card-info">
             <h4>{{ restaurant.name }}</h4>
-            <p>{{ restaurant.description }}</p>
           </div>
         </div>
       </div>
@@ -65,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -322,26 +318,53 @@ function determineSelectedItem() {
   showRecommendations.value = true;
 }
 
-const recommendations = ref([
-  {
-    name: '맛있는 집',
-    image:
-      'https://via.placeholder.com/300x200?text=%EB%A7%9B%EC%9E%88%EB%8A%94+%EC%A7%9D',
-    description: '정갈한 한식당입니다.',
-  },
-  {
-    name: '힙한 맛집',
-    image:
-      'https://via.placeholder.com/300x200?text=%ED%9E%99%ED%95%9C+%EB%A7%9B%EC%A7%91',
-    description: '모던한 분위기의 맛집입니다.',
-  },
-  {
-    name: '편안한 한식',
-    image:
-      'https://via.placeholder.com/300x200?text=%ED%8E%B8%EC%95%88%ED%95%9C+%ED%95%9C%EC%8B%9D',
-    description: '전통 한식의 맛을 느낄 수 있습니다.',
-  },
-]);
+// 모든 추천 데이터를 음식 이름별로 분류 (예시)
+const allRecommendations = {
+  김치찌개: [
+    {
+      name: '김치찌개 맛집 A',
+      image: 'https://via.placeholder.com/300x200?text=A',
+    },
+    {
+      name: '김치찌개 맛집 B',
+      image: 'https://via.placeholder.com/300x200?text=B',
+    },
+  ],
+  돈까스: [
+    {
+      name: '돈까스 맛집 X',
+      image: 'https://via.placeholder.com/300x200?text=X',
+    },
+    {
+      name: '돈까스 맛집 Y',
+      image: 'https://via.placeholder.com/300x200?text=Y',
+    },
+  ],
+  default: [
+    {
+      name: '맛있는 집',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20190101_258%2F1546331993237mQ9Nj_JPEG%2Fe-Z253OKwWz51wgKOCbE516m.jpg',
+    },
+    {
+      name: '힙한 맛집',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20190101_258%2F1546331993237mQ9Nj_JPEG%2Fe-Z253OKwWz51wgKOCbE516m.jpg',
+    },
+    {
+      name: '편안한 한식',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20190101_258%2F1546331993237mQ9Nj_JPEG%2Fe-Z253OKwWz51wgKOCbE516m.jpg',
+    },
+  ],
+};
+
+const currentRecommendations = computed(() => {
+  if (!selectedItem.value) return [];
+  return (
+    allRecommendations[selectedItem.value.name] || allRecommendations.default
+  );
+});
 
 function selectFood() {
   if (!selectedItem.value) return;
@@ -363,15 +386,13 @@ function selectFood() {
   margin-top: 0.5cm;
 }
 
-/* 결과 메시지: 컨트롤 버튼 영역 바로 아래 1cm 간격, 
-   요청에 따라 이 결과 메시지의 위치를 현재 위치에서 상단으로 0.3cm 이동 (즉, margin-top: 0.7cm) */
+/* 결과 메시지: 컨트롤 버튼 영역 바로 아래 1cm 간격 (margin-top: 0.7cm) */
 .result {
   margin-top: 0.7cm;
   font-size: 1.7rem;
 }
 
 .roulette-container {
-  /* 회전 요소들을 기존보다 1cm 상단으로 배치 */
   position: relative;
   margin: -1cm auto 0 auto;
   width: 750px;
@@ -422,6 +443,7 @@ function selectFood() {
   }
 }
 
+/* 컨트롤 버튼 영역: 현재 위치에서 0.5cm 상단으로 이동 */
 .controls {
   margin-top: calc(1rem + 0.2cm - 0.5cm);
 }
@@ -462,19 +484,23 @@ function selectFood() {
 .cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 3rem;
   justify-content: center;
 }
 .card {
+  /* CSS 변수 사용: 카드의 가로 크기를 정하고, 이미지 높이는 이 값에서 1cm를 뺀 값으로 설정 */
+  --card-width: 200px;
+  width: var(--card-width);
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 200px;
   overflow: hidden;
   text-align: center;
 }
 .card img {
   width: 100%;
+  height: calc(var(--card-width) - 2cm);
+  object-fit: cover;
   display: block;
 }
 .card-info {
