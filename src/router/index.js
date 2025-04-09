@@ -72,9 +72,14 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isLoggedIn) {
     return next('/login');
   }
-
-  if (to.path === '/login' && isLoggedIn) {
+  // 로그인했으면 로그인/회원가입 페이지 못 가게
+  if ((to.path === '/login' || to.path === '/signup') && isLoggedIn) {
     return next('/');
+  }
+
+  // ✅ 로그아웃 직후 뒤로가기 방지
+  if (!isLoggedIn && from.meta.requiresAuth && to.path !== '/login') {
+    return next('/login');
   }
 
   next();
