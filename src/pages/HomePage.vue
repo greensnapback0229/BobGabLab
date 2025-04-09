@@ -75,7 +75,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { onMounted, computed } from 'vue';
 import { useFinanceStore } from '@/stores/finance';
 import { useAuthStore } from '@/stores/auth';
