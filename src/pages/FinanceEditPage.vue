@@ -2,7 +2,7 @@
   <div class="form-page">
     <div class="form-container">
       <h2 class="costom_title">거래 내역 수정</h2>
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="submitFinance">
         <!-- 수입/지출 선택 버튼 -->
         <div class="d-flex justify-content-center mb-4">
           <button
@@ -37,18 +37,18 @@
         <div class="mb-3">
           <label for="amount">금액</label>
           <input
-            v-model.number="form.amount"
+            v-model="form.amount"
             type="number"
             id="amount"
-            min="1"
             class="form-control form-input"
             required
           />
         </div>
 
-        <div class="mb-3">
+        <!-- 음식 종류 (지출일 때만 표시) -->
+        <div class="mb-3" v-if="form.type === 'OUTPUT'">
           <label>음식 종류</label>
-          <div class="d-flex justify-content-between flex-wrap">
+          <div class="d-flex justify-content-center gap-2">
             <button
               v-for="type in foodTypes"
               :key="type.value"
@@ -62,14 +62,15 @@
           </div>
         </div>
 
-        <div class="mb-3">
+        <!-- 음식 이름 (지출일 때만 표시) -->
+        <div class="mb-3" v-if="form.type === 'OUTPUT'">
           <label for="food">음식 이름</label>
           <input
             v-model="form.food"
             type="text"
             id="food"
             class="form-control form-input"
-            required
+            :required="form.type === 'OUTPUT'"
           />
         </div>
 
@@ -84,9 +85,9 @@
 
         <div class="d-flex justify-content-center mt-4">
           <button type="submit" class="btn btn-save me-2">수정</button>
-          <button type="button" @click="cancel" class="btn btn-cancel">
-            취소
-          </button>
+          <router-link to="/finance/list" class="btn btn-cancel"
+            >취소</router-link
+          >
         </div>
       </form>
     </div>
@@ -96,23 +97,21 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
-
-import { useAuthStore } from '@/stores/auth';
 import { useFinanceStore } from '@/stores/finance';
+import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
-const authStore = useAuthStore();
 const financeStore = useFinanceStore();
+const financeId = route.params.id;
 
 const form = ref({
+  type: 'OUTPUT',
   date: '',
+  amount: '',
   foodType: 'KOREAN',
   food: '',
-  amount: 0,
   description: '',
-  type: 'OUTPUT',
 });
 
 const foodTypes = [
@@ -122,45 +121,47 @@ const foodTypes = [
   { label: '기타', value: 'ETC' },
 ];
 
-const financeId = route.params.id;
-
+// 기존 내역 불러오기
 onMounted(async () => {
-  const existing = await financeStore.finances.find((f) => f.id == financeId);
-  if (!existing) return alert('수정할 데이터를 찾을 수 없습니다.');
-
-  form.value = {
-    date: existing.date.slice(0, 10),
-    foodType: existing.foodType,
-    food: existing.food,
-    amount: existing.amount,
-    description: existing.description,
-    type: existing.type,
-  };
+  try {
+    const res = await axios.get(`/api/finance/${financeId}`);
+    const data = res.data;
+    form.value = {
+      type: data.type,
+      date: data.date,
+      amount: data.amount,
+      foodType: data.foodType || 'KOREAN',
+      food: data.food || '',
+      description: data.description || '',
+    };
+  } catch (err) {
+    alert('데이터를 불러오지 못했습니다.');
+  }
 });
 
-const handleSubmit = async () => {
-  if (!form.value.food || form.value.amount <= 0) {
-    alert('모든 항목을 입력하세요.');
-    return;
-  }
-
+const submitFinance = async () => {
   const updatedData = {
-    ...form.value,
-    userId: authStore.user?.id || localStorage.getItem('userId'),
-    date: new Date(form.value.date).toISOString(),
+    type: form.value.type,
+    date: form.value.date,
+    amount: parseFloat(form.value.amount),
+    description: form.value.description,
+    ...(form.value.type === 'OUTPUT' && {
+      foodType: form.value.foodType,
+      food: form.value.food,
+    }),
   };
 
   try {
-    await axios.patch(`/api/finance/${financeId}`, updatedData);
-    await financeStore.loadFinances(updatedData.userId);
+    await axios.put(`/api/finance/${financeId}`, updatedData);
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      await financeStore.loadFinances(userId);
+    }
     router.push('/finance/list');
   } catch (err) {
-    console.error('수정 실패:', err);
     alert('수정에 실패했습니다.');
   }
 };
-
-const cancel = () => router.push('/finance/list');
 </script>
 
 <style scoped>
@@ -220,9 +221,9 @@ const cancel = () => router.push('/finance/list');
   border: 2px solid #71b548 !important;
   color: #71b548 !important;
   background-color: transparent;
-  width: 80px;
+  width: 70px;
+  min-width: 60px;
   padding: 8px 0;
-  margin: 4px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
