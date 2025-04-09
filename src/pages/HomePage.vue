@@ -1,6 +1,8 @@
 <template>
-  <div class="finance-home d-flex flex-column div-custom-beige min-vh-100 py-1 px-3">
-  <!-- 배너 -->
+  <div
+    class="finance-home d-flex flex-column div-custom-beige min-vh-100 py-1 px-3"
+  >
+    <!-- 배너 -->
     <div class="banner-wrapper">
       <RouterLink to="/random">
         <img
@@ -9,11 +11,8 @@
           class="banner-img img-fluid w-100 shadow"
         />
       </RouterLink>
-      </div>
-    <div class="container py-4 d-flex flex-column flex-grow-1">
-      <!-- 제목 -->
-      <h2 class="text-center text-dark fw-bold mb-4">📊 이번 달 가계부 요약</h2>
-
+    </div>
+    <div class="container py-5 d-flex flex-column flex-grow-1">
       <!-- 요약 카드 -->
       <div class="row text-center mb-4">
         <div class="col-md-4">
@@ -43,7 +42,7 @@
       </div>
 
       <!-- 최근 거래 내역 -->
-      <div class="mt-auto">
+      <div class="mt-5">
         <h4 class="text-start mb-3">📋 최근 거래 내역</h4>
         <div class="d-flex flex-column align-items-start gap-2">
           <div
@@ -76,7 +75,7 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { useFinanceStore } from '@/stores/finance';
 import { useAuthStore } from '@/stores/auth';
 
