@@ -17,8 +17,8 @@
         </div>
       </div>
 
-      <!-- 빨간색 포인터 (타원 하단에서 2cm 아래) -->
-      <div class="pointer"></div>
+      <!-- 빨간색 포인터: 추첨 전에는 정지, 선택 후에만 animate-pointer 클래스가 추가되어 움직임 -->
+      <div class="pointer" :class="{ 'animate-pointer': selectedItem }"></div>
     </div>
 
     <!-- 컨트롤 버튼 영역 -->
@@ -41,9 +41,9 @@
       </button>
     </div>
 
-    <!-- 결과: 선택된 음식 표시 (원하는 경우) -->
+    <!-- 결과: 선택된 음식 표시 -->
     <div class="result" v-if="selectedItem">
-      선택된 음식: <strong>{{ selectedItem.name }}</strong>
+      오늘의 점심 메뉴는 <strong>{{ selectedItem.name }}</strong> 입니다!
     </div>
   </section>
 </template>
@@ -308,8 +308,6 @@ function determineSelectedItem() {
 // 선택 버튼 클릭 시, 선택된 음식 이름을 URL 경로에 포함하여 이동
 function selectFood() {
   if (!selectedItem.value) return;
-  // 원래 값은 URL 인코딩 처리가 자동으로 이루어지므로, 직접 인코딩할 필요 없이 사용하거나,
-  // 만약 인코딩을 원한다면 아래와 같이 적용할 수 있습니다.
   const selectedFoodName = encodeURIComponent(selectedItem.value.name);
   router.push(`/party/register/${selectedFoodName}`);
 }
@@ -320,10 +318,14 @@ function selectFood() {
   text-align: center;
   padding: 2rem;
   background-color: #faf8f3;
+  /* 전체 콘텐츠를 1cm 아래로 이동 */
+  padding-top: calc(2rem + 0.7cm);
 }
 
 .random-lunch-page h2 {
   color: #003d0f;
+  /* 제목을 0.5cm 아래로 이동 */
+  margin-top: 0.5cm;
 }
 
 .roulette-container {
@@ -350,9 +352,10 @@ function selectFood() {
   color: #003d0f;
 }
 
+/* 기본 포인터: 애니메이션이 적용되지 않은 상태 */
 .pointer {
   position: absolute;
-  top: calc(50% + 80px + 2cm);
+  top: calc(50% + 80px + 2.2cm);
   left: 50%;
   transform: translateX(-50%);
   width: 0;
@@ -362,8 +365,26 @@ function selectFood() {
   border-bottom: 25px solid red;
 }
 
+/* animate-pointer 클래스가 추가되면 bounce 애니메이션 실행 */
+.animate-pointer {
+  animation: bounce 2s infinite ease-in-out;
+}
+
+/* bounce 애니메이션 키프레임: 위로 0.3cm 이동 후 다시 원위치 */
+@keyframes bounce {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-0.4cm);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
 .controls {
-  margin-top: 1rem;
+  margin-top: calc(1rem + 0.5cm);
 }
 
 .controls button {
@@ -392,6 +413,6 @@ function selectFood() {
 
 .result {
   margin-top: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.7rem;
 }
 </style>
