@@ -12,6 +12,7 @@
         />
       </RouterLink>
     </div>
+
     <div class="container py-5 d-flex flex-column flex-grow-1">
       <!-- 요약 카드 -->
       <div class="row text-center mb-4">
@@ -58,11 +59,14 @@
                 {{ item.type === 'INPUT' ? '수입' : '지출' }}
               </span>
             </div>
-            <div>
+
+            <!-- 음식 정보는 지출일 경우에만 표시 -->
+            <div v-if="item.type === 'OUTPUT'">
               <strong>음식:</strong> {{ item.food }} ({{
                 formatFoodType(item.foodType)
               }})
             </div>
+
             <div>
               <strong>금액:</strong> {{ item.amount.toLocaleString() }}원
             </div>
@@ -82,20 +86,18 @@ import { useAuthStore } from '@/stores/auth';
 const financeStore = useFinanceStore();
 const authStore = useAuthStore();
 
+// 배너 이미지
 const banners = [
   new URL('@/assets/banners/banner1.jpg', import.meta.url).href,
   new URL('@/assets/banners/banner2.jpg', import.meta.url).href,
   new URL('@/assets/banners/banner3.jpg', import.meta.url).href,
 ];
-
 const selectedBanner = ref('');
-
 onMounted(() => {
-  // 무작위 배너 선택
   selectedBanner.value = banners[Math.floor(Math.random() * banners.length)];
 });
 
-// 페이지 진입 시 사용자 거래 내역 불러오기
+// 거래 내역 불러오기
 onMounted(async () => {
   const userId = authStore.user?.id || localStorage.getItem('userId');
   if (userId) {
@@ -103,11 +105,11 @@ onMounted(async () => {
   }
 });
 
-// 이번 달 시작일과 종료일 계산
+// 현재 달 시작/끝 계산
 const getStartAndEndOfCurrentMonth = () => {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth(); // 0~11
+  const month = now.getMonth();
   const start = new Date(year, month, 1);
   const end = new Date(year, month + 1, 0);
   return { start, end };
@@ -122,22 +124,20 @@ const currentMonthFinances = computed(() => {
   });
 });
 
-// 이번 달 기준 총액 계산
+// 통계
 const totalInput = computed(() =>
   currentMonthFinances.value
     .filter((item) => item.type === 'INPUT')
     .reduce((sum, item) => sum + Number(item.amount), 0)
 );
-
 const totalOutput = computed(() =>
   currentMonthFinances.value
     .filter((item) => item.type === 'OUTPUT')
     .reduce((sum, item) => sum + Number(item.amount), 0)
 );
-
 const totalProfit = computed(() => totalInput.value - totalOutput.value);
 
-// 최근 거래 2건 (전체 기간 기준)
+// 최근 거래 2건
 const recentFinances = computed(() => {
   return [...financeStore.finances]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -174,7 +174,6 @@ const formatFoodType = (value) => {
   left: 0;
   overflow: hidden;
 }
-
 .banner-img {
   width: 100%;
   height: auto;
@@ -195,13 +194,11 @@ const formatFoodType = (value) => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   min-height: 90px;
 }
-
 .summary-title {
   font-size: 0.95rem;
   font-weight: bold;
   margin-bottom: 4px;
 }
-
 .summary-amount {
   font-size: 1.2rem;
   font-weight: bold;

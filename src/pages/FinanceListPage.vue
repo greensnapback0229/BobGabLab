@@ -51,10 +51,15 @@
               {{ item.type === 'INPUT' ? '수입' : '지출' }}
             </span>
           </div>
-          <div class="mb-1"><strong>음식 이름:</strong> {{ item.food }}</div>
-          <div class="mb-1">
+
+          <!-- 음식 관련 정보: 지출일 때만 표시 -->
+          <div class="mb-1" v-if="item.type === 'OUTPUT'">
+            <strong>음식 이름:</strong> {{ item.food }}
+          </div>
+          <div class="mb-1" v-if="item.type === 'OUTPUT'">
             <strong>음식 종류:</strong> {{ formatFoodType(item.foodType) }}
           </div>
+
           <div class="mb-1">
             <strong>금액:</strong> {{ item.amount.toLocaleString() }}원
           </div>
