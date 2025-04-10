@@ -1,7 +1,7 @@
 <template>
   <div class="form-page">
     <div class="form-container">
-      <h2 class="costom_title">거래 내역 등록</h2>
+      <h2 class="costom_title">거래 내역 수정</h2>
       <form @submit.prevent="submitFinance">
         <!-- 수입/지출 선택 버튼 -->
         <div class="d-flex justify-content-center mb-4">
@@ -45,7 +45,7 @@
           />
         </div>
 
-        <!-- 음식 관련 항목은 지출일 때만 표시 -->
+        <!-- 음식 종류 (지출일 때만 표시) -->
         <div class="mb-3" v-if="form.type === 'OUTPUT'">
           <label>음식 종류</label>
           <div class="d-flex justify-content-center gap-2">
@@ -62,6 +62,7 @@
           </div>
         </div>
 
+        <!-- 음식 이름 (지출일 때만 표시) -->
         <div class="mb-3" v-if="form.type === 'OUTPUT'">
           <label for="food">음식 이름</label>
           <input
@@ -83,7 +84,7 @@
         </div>
 
         <div class="d-flex justify-content-center mt-4">
-          <button type="submit" class="btn btn-save me-2">저장</button>
+          <button type="submit" class="btn btn-save me-2">수정</button>
           <router-link to="/finance/list" class="btn btn-cancel"
             >취소</router-link
           >
@@ -94,15 +95,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useFinanceStore } from '@/stores/finance';
+import axios from 'axios';
 
+const route = useRoute();
 const router = useRouter();
 const financeStore = useFinanceStore();
+const financeId = route.params.id;
 
 const form = ref({
-  type: 'OUTPUT', // 기본은 지출
+  type: 'OUTPUT',
   date: '',
   amount: '',
   foodType: 'KOREAN',
@@ -117,32 +121,45 @@ const foodTypes = [
   { label: '기타', value: 'ETC' },
 ];
 
-const submitFinance = async () => {
-  const userId = localStorage.getItem('userId');
-  if (!userId) {
-    alert('로그인이 필요합니다.');
-    return;
+// 기존 내역 불러오기
+onMounted(async () => {
+  try {
+    const res = await axios.get(`/api/finance/${financeId}`);
+    const data = res.data;
+    form.value = {
+      type: data.type,
+      date: data.date,
+      amount: data.amount,
+      foodType: data.foodType || 'KOREAN',
+      food: data.food || '',
+      description: data.description || '',
+    };
+  } catch (err) {
+    alert('데이터를 불러오지 못했습니다.');
   }
+});
 
-  const newFinance = {
-    userId,
+const submitFinance = async () => {
+  const updatedData = {
     type: form.value.type,
     date: form.value.date,
     amount: parseFloat(form.value.amount),
-    foodType: form.value.foodType,
-    food: form.value.food,
     description: form.value.description,
+    ...(form.value.type === 'OUTPUT' && {
+      foodType: form.value.foodType,
+      food: form.value.food,
+    }),
   };
 
-  console.log('보낼 financeData:', newFinance); // ✅ 여기에 추가
-
-  const success = await financeStore.addFinance(newFinance);
-
-  if (success) {
-    await financeStore.loadFinances(userId);
+  try {
+    await axios.put(`/api/finance/${financeId}`, updatedData);
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      await financeStore.loadFinances(userId);
+    }
     router.push('/finance/list');
-  } else {
-    alert('거래 내역 저장에 실패했습니다. 다시 시도해주세요.');
+  } catch (err) {
+    alert('수정에 실패했습니다.');
   }
 };
 </script>

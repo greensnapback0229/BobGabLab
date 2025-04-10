@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../pages/HomePage.vue';
+import HomePage from '../pages/HomePage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../pages/HomePage.vue'),
     },
     {
       path: '/about',
@@ -38,8 +38,14 @@ const router = createRouter({
       component: () => import('@/pages/party/PartyListPage.vue'),
     },
     {
-      path: '/party/register',
+      path: '/party/register/:food_name',
       name: 'partyRegister',
+      component: () => import('@/pages/party/PartyRegisterPage.vue'),
+    },
+
+    {
+      path: '/party/register',
+      name: 'partyRegister2',
       component: () => import('@/pages/party/PartyRegisterPage.vue'),
     },
     {
@@ -47,11 +53,26 @@ const router = createRouter({
       name: 'financeRegister',
       component: () => import('@/pages/FinanceRegisterPage.vue'),
     },
-
+    {
+      path: '/finance/list',
+      name: 'financeList',
+      component: () => import('@/pages/FinanceListPage.vue'),
+    },
+    {
+      path: '/finance/edit/:id',
+      name: 'FinanceEdit',
+      component: () => import('@/pages/FinanceEditPage.vue'),
+      meta: { requiresAuth: true },
+    },
     {
       path: '/random',
       name: 'random',
       component: () => import('@/pages/RandomLunchPage.vue'),
+    },
+    {
+      path: '/party/details/:party_id',
+      name: 'PartyDetails',
+      component: () => import('@/pages/party/PartyDetailPage.vue'),
     },
   ],
 });
@@ -62,9 +83,14 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isLoggedIn) {
     return next('/login');
   }
-
-  if (to.path === '/login' && isLoggedIn) {
+  // 로그인했으면 로그인/회원가입 페이지 못 가게
+  if ((to.path === '/login' || to.path === '/signup') && isLoggedIn) {
     return next('/');
+  }
+
+  // ✅ 로그아웃 직후 뒤로가기 방지
+  if (!isLoggedIn && from.meta.requiresAuth && to.path !== '/login') {
+    return next('/login');
   }
 
   next();

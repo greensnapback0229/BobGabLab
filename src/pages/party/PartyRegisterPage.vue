@@ -49,9 +49,14 @@
     </form>
   </div>
 </template>
+
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 const title = ref('');
 const day = ref('오늘');
@@ -60,28 +65,32 @@ const minute = ref('00분'); // ex: "00분"
 const place = ref('');
 const description = ref('');
 
-const userId = 'user-1'; // 임시 고정
+const userId = localStorage.getItem('userId') || ''; // 없으면 빈 문자열
+
+// ✅ 파라미터가 있을 경우에만 자동 입력
+onMounted(() => {
+  const foodName = route.params.food_name;
+  if (foodName) {
+    place.value = foodName;
+  }
+});
 
 const registerParty = async () => {
-  // 날짜 계산
   const today = new Date();
   if (day.value === '내일') today.setDate(today.getDate() + 1);
 
-  // ✅ '시', '분' 제거 후 padStart로 포맷 맞춤
   const rawHour = hour.value.replace('시', '');
   const rawMinute = minute.value.replace('분', '');
 
   const h = rawHour.toString().padStart(2, '0');
   const m = rawMinute.toString().padStart(2, '0');
 
-  console.log('hour:', h);
-  console.log('minute:', m);
-
   const isoTime = new Date(
     `${today.toISOString().split('T')[0]}T${h}:${m}:00`
   ).toISOString();
 
   const partyData = {
+    title: title.value,
     owner: userId,
     location: place.value,
     promiseTime: isoTime,
@@ -89,9 +98,33 @@ const registerParty = async () => {
   };
 
   try {
-    const res = await axios.post('http://localhost:3000/lunchParty', partyData);
+    // ✅ 1. 점심 파티 등록
+    const res = await axios.post(
+      'https://server.meallab.site/lunchParty',
+      partyData
+    );
+    const createdParty = res.data;
+    const partyId = createdParty.id;
+
+    // ✅ 2. 유저 정보 가져오기
+    const userRes = await axios.get(
+      `https://server.meallab.site/user/${userId}`
+    );
+    const user = userRes.data;
+
+    // ✅ 3. lunchParty 배열에 추가, lastLunch 설정
+    const updatedUser = {
+      ...user,
+      lunchParty: [...(user.lunchParty || []), partyId],
+      lastLunch: partyId,
+    };
+
+    // ✅ 4. 유저 정보 업데이트
+    await axios.put(`https://server.meallab.site/user/${userId}`, updatedUser);
+
     alert('파티가 등록되었습니다!');
-    console.log(res.data);
+    console.log('파티:', createdParty);
+    console.log('업데이트된 유저:', updatedUser);
   } catch (err) {
     console.error('등록 실패:', err);
     alert('등록 중 오류 발생!');
@@ -168,5 +201,8 @@ button {
 button:hover {
   background-color: #66bb44;
   color: white;
+}
+:global(body) {
+  background-color: #faf8f3;
 }
 </style>
