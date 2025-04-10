@@ -5,11 +5,25 @@
     <!-- 배너 -->
     <div class="banner-wrapper">
       <RouterLink to="/random">
-        <img
-          :src="selectedBanner"
-          alt="배너"
-          class="banner-img img-fluid w-100 shadow"
-        />
+        <template v-if="selectedBanner.endsWith('.mp4')">
+          <video
+            class="banner-img w-100 shadow"
+            autoplay
+            muted
+            loop
+            playsinline
+          >
+            <source :src="selectedBanner" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </template>
+        <template v-else>
+          <img
+            :src="selectedBanner"
+            alt="배너"
+            class="banner-img img-fluid w-100 shadow"
+          />
+        </template>
       </RouterLink>
     </div>
 
@@ -116,9 +130,9 @@ const recentParties = ref([]);
 
 // 배너 이미지 로딩
 const banners = [
-  new URL('@/assets/banners/banner1.jpg', import.meta.url).href,
-  new URL('@/assets/banners/banner2.jpg', import.meta.url).href,
-  new URL('@/assets/banners/banner3.jpg', import.meta.url).href,
+  new URL('@/assets/banners/banner1.mp4', import.meta.url).href,
+  new URL('@/assets/banners/banner2.mp4', import.meta.url).href,
+  new URL('@/assets/banners/banner3.mp4', import.meta.url).href,
 ];
 const selectedBanner = ref('');
 onMounted(() => {
