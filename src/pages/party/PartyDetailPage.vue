@@ -36,7 +36,9 @@ const participants = ref([]);
 
 const fetchParty = async () => {
   try {
-    const res = await axios.get(`http://localhost:3000/lunchParty/${partyId}`);
+    const res = await axios.get(
+      `https://server.meallab.site/lunchParty/${partyId}`
+    );
     party.value = res.data;
     await fetchParticipants();
   } catch (e) {
@@ -49,7 +51,7 @@ const fetchParticipants = async () => {
 
   const ids = party.value.participation;
   const promises = ids.map((id) =>
-    axios.get(`http://localhost:3000/user/${id}`).then((res) => res.data)
+    axios.get(`https://server.meallab.site/user/${id}`).then((res) => res.data)
   );
 
   try {
@@ -93,7 +95,7 @@ const handleJoin = async () => {
 
   try {
     // ✅ 1. lunchParty 참여 업데이트
-    await axios.patch(`http://localhost:3000/lunchParty/${partyId}`, {
+    await axios.patch(`https://server.meallab.site/lunchParty/${partyId}`, {
       participation: updatedParticipants,
     });
 
@@ -101,7 +103,9 @@ const handleJoin = async () => {
     await fetchParticipants();
 
     // ✅ 2. user 정보 가져오기
-    const userRes = await axios.get(`http://localhost:3000/user/${userId}`);
+    const userRes = await axios.get(
+      `https://server.meallab.site/user/${userId}`
+    );
     const user = userRes.data;
 
     // ✅ 3. lunchParty 배열 업데이트 + lastLunch 설정
@@ -111,7 +115,10 @@ const handleJoin = async () => {
     };
 
     // ✅ 4. user 정보 PATCH 요청
-    await axios.patch(`http://localhost:3000/user/${userId}`, updatedUser);
+    await axios.patch(
+      `https://server.meallab.site/user/${userId}`,
+      updatedUser
+    );
 
     alert('참여 완료!');
   } catch (err) {
@@ -135,6 +142,6 @@ const handleJoin = async () => {
 }
 
 :global(body) {
-  background-color: #fff8eb;
+  background-color: #faf8f3;
 }
 </style>

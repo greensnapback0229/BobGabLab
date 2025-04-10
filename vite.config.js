@@ -13,6 +13,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: true, // 👈 이 줄 추가로 외부 접속 가능
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
