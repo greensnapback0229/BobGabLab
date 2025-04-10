@@ -70,7 +70,7 @@ const minute = ref('00분'); // ex: "00분"
 const place = ref('');
 const description = ref('');
 
-const userId = localStorage.getItem('userId') || ''; // 없으면 빈 문자열
+const userId = sessionStorage.getItem('userId') || ''; // 없으면 빈 문자열
 
 // ✅ 파라미터가 있을 경우에만 자동 입력
 onMounted(() => {

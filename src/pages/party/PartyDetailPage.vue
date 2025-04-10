@@ -82,7 +82,7 @@ const formattedTime = computed(() => {
 
 // ✅ 참여하기 버튼
 const handleJoin = async () => {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   if (!userId) {
     alert('로그인이 필요합니다!');
     return;
