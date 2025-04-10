@@ -38,9 +38,12 @@
           <tr v-for="(party, index) in parties" :key="index">
             <td>{{ party.no }}</td>
             <td class="text-start">
-              <a :href="party.link" class="text-decoration-none text-dark">
+              <router-link
+                :to="party.link"
+                class="text-decoration-none text-dark"
+              >
                 {{ party.title }}
-              </a>
+              </router-link>
             </td>
             <td>{{ party.date }} - {{ party.time }}</td>
             <td>{{ party.posted }}</td>
