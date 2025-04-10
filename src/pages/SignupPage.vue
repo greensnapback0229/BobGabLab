@@ -84,8 +84,6 @@ const handleSignup = async () => {
 
   if (success) {
     router.push('/');
-  } else {
-    alert('회원가입 실패 또는 중복된 사용자입니다.');
   }
 };
 </script>
