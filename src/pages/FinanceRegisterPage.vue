@@ -118,7 +118,7 @@ const foodTypes = [
 ];
 
 const submitFinance = async () => {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   if (!userId) {
     alert('로그인이 필요합니다.');
     return;
