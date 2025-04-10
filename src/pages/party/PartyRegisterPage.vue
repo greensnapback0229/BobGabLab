@@ -1,6 +1,11 @@
 <template>
   <br /><br />
-  <h1 class="title"><span class="launch">LAUNCH</span> 파티 등록 🎈</h1>
+  <!-- Title -->
+  <div class="container text-center my-5">
+    <h2 class="fw-bold">
+      <span class="title-launch">LAUNCH</span> 파티 등록 🎈
+    </h2>
+  </div>
 
   <div class="register-container">
     <form class="form">
@@ -201,6 +206,12 @@ button {
 button:hover {
   background-color: #66bb44;
   color: white;
+}
+
+.title-launch {
+  font-weight: bold;
+  font-size: 32px;
+  color: #5db85c;
 }
 :global(body) {
   background-color: #faf8f3;
