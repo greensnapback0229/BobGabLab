@@ -141,7 +141,7 @@ onMounted(() => {
 
 // 거래 내역과 파티 불러오기
 onMounted(async () => {
-  const userId = authStore.user?.id || localStorage.getItem('userId');
+  const userId = authStore.user?.id || sessionStorage.getItem('userId');
   if (userId) {
     await financeStore.loadFinances(userId);
     await loadRecentParties();
@@ -199,7 +199,7 @@ const formatFoodType = (value) => {
 
 const loadRecentParties = async () => {
   try {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     if (!userId) return;
 
     const res = await fetch(`https://server.meallab.site/user/${userId}`);
