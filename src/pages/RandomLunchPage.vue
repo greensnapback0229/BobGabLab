@@ -160,11 +160,15 @@ const items = [
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
   },
   {
-    name: '마라탕',
+    name: '훠궈',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
   },
   {
     name: '학식',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '마라탕',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
   },
 ];
@@ -276,6 +280,13 @@ function determineSelectedItem() {
 
 // 모든 추천 데이터를 음식 이름별로 분류 (예시)
 const allRecommendations = {
+  마라탕: [
+    {
+      name: '춘리마라탕',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20231227_290%2F1703656893365lgVVl_JPEG%2FKakaoTalk_20230329_170349390.jpg',
+    },
+  ],
   학식: [
     {
       name: '세종대 학식',
@@ -283,7 +294,7 @@ const allRecommendations = {
         'https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA2MjFfMjEw%2FMDAxNzE4OTM1Njg3NDE4.6NsUj8H0sk_eGvx8kDy5M_iSI6UGG5adnVDhBKUfWccg._AfVj-qjHC4GC0Ekrh2vt5ZJYj71xFyP4UYhKHxm3Vsg.JPEG%2FIMG_8624.jpeg&type=sc960_832',
     },
   ],
-  마라탕: [
+  훠궈: [
     {
       name: '하이디라오',
       image:
