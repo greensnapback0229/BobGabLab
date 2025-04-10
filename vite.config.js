@@ -12,4 +12,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    host: true, // 외부 접근 허용
+    allowedHosts: ['meallab.site'], // 특정 호스트 허용
+  },
 });
