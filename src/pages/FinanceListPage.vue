@@ -128,7 +128,7 @@ const scrollAreaRef = ref(null);
 watch(
   () => route.fullPath,
   async () => {
-    const userId = authStore.user?.id || localStorage.getItem('userId');
+    const userId = authStore.user?.id || sessionStorage.getItem('userId');
     if (userId) {
       await financeStore.loadFinances(userId);
     }
@@ -141,7 +141,7 @@ const deleteItem = async (id) => {
     if (typeof financeStore.deleteFinance === 'function') {
       await financeStore.deleteFinance(id);
       await financeStore.loadFinances(
-        authStore.user?.id || localStorage.getItem('userId')
+        authStore.user?.id || sessionStorage.getItem('userId')
       );
     } else {
       console.error('deleteFinance 함수가 정의되어 있지 않습니다.');
