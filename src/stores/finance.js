@@ -2,10 +2,12 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+const CORS_URL = 'https://server.meallab.site';
+const apiUrl = CORS_URL + '/finance';
+const userApiUrl = CORS_URL + '/user';
+
 export const useFinanceStore = defineStore('finance', () => {
   const finances = ref([]);
-  const apiUrl = '/api/finance';
-  const userApiUrl = '/api/user';
 
   const loadFinances = async (userId) => {
     try {

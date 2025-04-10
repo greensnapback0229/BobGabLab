@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false);
   const user = ref({});
 
-  const CORS_URL = '/api';
+  const CORS_URL = 'https://server.meallab.site';
   const corsUrl = CORS_URL + '/user';
 
   async function login(username, password) {

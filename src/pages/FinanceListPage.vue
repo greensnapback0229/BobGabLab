@@ -1,7 +1,8 @@
 <template>
   <div class="list-page">
     <div class="container mt-4">
-      <h3 class="mb-4 text-center text-custom-green fw-bold">거래 내역</h3>
+      <h3 class="mb-4 text-center text-custom-green fw-bold custom-title">거래 내역</h3>
+
       <!-- 필터 -->
       <div class="row g-2 mb-4">
         <div class="col-md-3">
@@ -185,6 +186,10 @@ const filteredFinances = computed(() => {
 </script>
 
 <style scoped>
+.custom-title {
+  color: #003d0f !important;
+}
+
 .list-page {
   background-color: #faf8f3;
   min-height: 100vh;

@@ -68,7 +68,9 @@ export default {
   },
   async created() {
     try {
-      const response = await axios.get('http://localhost:3000/lunchParty');
+      const response = await axios.get(
+        'https://server.meallab.site/lunchParty'
+      );
       const allParties = response.data;
 
       console.log(response);
@@ -146,6 +148,6 @@ body {
   background-color: #589944;
 }
 :global(body) {
-  background-color: #fff8eb;
+  background-color: #faf8f3;
 }
 </style>
