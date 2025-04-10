@@ -106,7 +106,7 @@ const handleJoin = async () => {
 
     // ✅ 3. lunchParty 배열 업데이트 + lastLunch 설정
     const updatedUser = {
-      lunchParty: [...(user.lunchParty || []), Number(partyId)],
+      lunchParty: [...(user.lunchParty || []), partyId],
       lastLunch: Number(partyId),
     };
 
