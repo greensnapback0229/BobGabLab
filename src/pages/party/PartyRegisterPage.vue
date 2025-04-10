@@ -36,7 +36,7 @@
       </div>
 
       <div class="form-group">
-        <label for="place"><strong>Where To Eat</strong></label>
+        <label for="place"><strong>What To Eat</strong></label>
         <input v-model="place" type="text" id="place" />
       </div>
 
