@@ -178,7 +178,7 @@ const totalProfit = computed(() => totalInput.value - totalOutput.value);
 const recentFinances = computed(() => {
   return [...financeStore.finances]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 2);
+    .slice(0, 1);
 });
 
 const formatDate = (dateStr) => {
