@@ -106,7 +106,7 @@ const handleJoin = async () => {
 
     // ✅ 3. lunchParty 배열 업데이트 + lastLunch 설정
     const updatedUser = {
-      lunchParty: [...(user.lunchParty || []), Number(partyId)],
+      lunchParty: [...(user.lunchParty || []), partyId],
       lastLunch: Number(partyId),
     };
 
@@ -132,5 +132,9 @@ const handleJoin = async () => {
 }
 .party-details p {
   margin: 0.5rem 0;
+}
+
+:global(body) {
+  background-color: #fff8eb;
 }
 </style>

@@ -197,4 +197,7 @@ button:hover {
   background-color: #66bb44;
   color: white;
 }
+:global(body) {
+  background-color: #fff8eb;
+}
 </style>
