@@ -161,23 +161,27 @@ const formatFoodType = (value) => {
   );
 };
 
+// ✅ 날짜 내림차순 정렬 추가됨
 const filteredFinances = computed(() => {
-  return financeStore.finances.filter((item) => {
-    const itemDate = item.date.split('T')[0];
+  return financeStore.finances
+    .filter((item) => {
+      const itemDate = item.date.split('T')[0];
 
-    if (
-      filters.value.category &&
-      (item.type !== 'OUTPUT' || item.foodType !== filters.value.category)
-    )
-      return false;
+      if (
+        filters.value.category &&
+        (item.type !== 'OUTPUT' || item.foodType !== filters.value.category)
+      )
+        return false;
 
-    if (filters.value.type && item.type !== filters.value.type) return false;
-    if (filters.value.startDate && itemDate < filters.value.startDate)
-      return false;
-    if (filters.value.endDate && itemDate > filters.value.endDate) return false;
+      if (filters.value.type && item.type !== filters.value.type) return false;
+      if (filters.value.startDate && itemDate < filters.value.startDate)
+        return false;
+      if (filters.value.endDate && itemDate > filters.value.endDate)
+        return false;
 
-    return true;
-  });
+      return true;
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 });
 </script>
 
