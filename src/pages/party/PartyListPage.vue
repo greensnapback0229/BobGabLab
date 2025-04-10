@@ -116,4 +116,7 @@ body {
 .btn-register:hover {
   background-color: #589944;
 }
+:global(body) {
+  background-color: #fff8eb;
+}
 </style>

@@ -133,4 +133,8 @@ const handleJoin = async () => {
 .party-details p {
   margin: 0.5rem 0;
 }
+
+:global(body) {
+  background-color: #fff8eb;
+}
 </style>
