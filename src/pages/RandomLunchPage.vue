@@ -400,6 +400,11 @@ const allRecommendations = {
   ],
   떡볶이: [
     {
+      name: '은혜즉석떡볶이',
+      image:
+        'https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAzMThfMTk3%2FMDAxNzQyMzA1MDcyMjM1.SXUmM0opIPJASs1oBPn-1iZ7QCvHbtNfHc1jAJugeukg.fQhk5J0MQ6VecemHRh7UdEUnpMFLZ5JJRX1QTdOe--Yg.JPEG%2FKakaoTalk_20250318_195046926_03.jpg',
+    },
+    {
       name: '우동연가',
       image:
         'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20240408_35%2F1712550532812a6kYq_JPEG%2F055A9169333.jpg',
