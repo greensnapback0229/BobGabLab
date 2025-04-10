@@ -60,7 +60,7 @@
       <div class="row mt-4 g-4">
         <!-- 최근 거래 내역 -->
         <div class="col-12 col-lg-6">
-          <h4 class="text-start mb-3">📋 최근 거래 내역</h4>
+          <h4 class="text-start mb-3 fw-bold">📋 최근 거래 내역</h4>
           <div class="d-flex flex-column gap-3">
             <div
               v-for="item in recentFinances"
@@ -94,7 +94,7 @@
 
         <!-- 최근 파티 목록 -->
         <div class="col-12 col-lg-6">
-          <h4 class="text-start mb-3">🎉 최근 파티 목록</h4>
+          <h4 class="text-start mb-3 fw-bold">🎉 최근 파티 목록</h4>
           <div class="d-flex flex-column gap-3">
             <div
               v-for="party in recentParties"

@@ -13,7 +13,9 @@
 
     <!-- Title -->
     <div class="container text-center my-5">
-      <h2><span class="title-launch">LAUNCH</span> 파티 모집 🎈</h2>
+      <h2 class="fw-bold">
+        <span class="title-launch">LAUNCH</span> 파티 모집 🎈
+      </h2>
     </div>
 
     <!-- Table -->

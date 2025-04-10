@@ -1,6 +1,8 @@
 <template>
   <div class="container text-center my-5">
-    <h2><span class="title-launch">LAUNCH</span> 파티 모집 🎈</h2>
+    <h2 class="fw-bold">
+      <span class="title-launch">LAUNCH</span> 파티 상세 🎈
+    </h2>
   </div>
   <div class="party-details">
     <p><strong>제목:</strong> {{ party.title }}</p>
@@ -132,6 +134,11 @@ const handleJoin = async () => {
 }
 .party-details p {
   margin: 0.5rem 0;
+}
+.title-launch {
+  font-weight: bold;
+  font-size: 32px;
+  color: #5db85c;
 }
 
 :global(body) {
