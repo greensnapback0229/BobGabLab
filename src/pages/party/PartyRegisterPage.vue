@@ -134,6 +134,8 @@ const registerParty = async () => {
     console.error('등록 실패:', err);
     alert('등록 중 오류 발생!');
   }
+
+  router.push('/party/list');
 };
 </script>
 
