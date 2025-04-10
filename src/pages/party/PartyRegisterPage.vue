@@ -99,12 +99,17 @@ const registerParty = async () => {
 
   try {
     // ✅ 1. 점심 파티 등록
-    const res = await axios.post('http://localhost:3000/lunchParty', partyData);
+    const res = await axios.post(
+      'https://server.meallab.site/lunchParty',
+      partyData
+    );
     const createdParty = res.data;
     const partyId = createdParty.id;
 
     // ✅ 2. 유저 정보 가져오기
-    const userRes = await axios.get(`http://localhost:3000/user/${userId}`);
+    const userRes = await axios.get(
+      `https://server.meallab.site/user/${userId}`
+    );
     const user = userRes.data;
 
     // ✅ 3. lunchParty 배열에 추가, lastLunch 설정
@@ -115,7 +120,7 @@ const registerParty = async () => {
     };
 
     // ✅ 4. 유저 정보 업데이트
-    await axios.put(`http://localhost:3000/user/${userId}`, updatedUser);
+    await axios.put(`https://server.meallab.site/user/${userId}`, updatedUser);
 
     alert('파티가 등록되었습니다!');
     console.log('파티:', createdParty);
@@ -198,6 +203,6 @@ button:hover {
   color: white;
 }
 :global(body) {
-  background-color: #fff8eb;
+  background-color: #faf8f3;
 }
 </style>

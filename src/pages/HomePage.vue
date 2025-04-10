@@ -202,14 +202,16 @@ const loadRecentParties = async () => {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
 
-    const res = await fetch(`http://localhost:3000/user/${userId}`);
+    const res = await fetch(`https://server.meallab.site/user/${userId}`);
     const user = await res.json();
 
     const partyIds = user.lunchParty || [];
     const lastTwoIds = partyIds.slice(-2);
 
     const partyPromises = lastTwoIds.map((id) =>
-      fetch(`http://localhost:3000/lunchParty/${id}`).then((res) => res.json())
+      fetch(`https://server.meallab.site/lunchParty/${id}`).then((res) =>
+        res.json()
+      )
     );
 
     recentParties.value = await Promise.all(partyPromises);
