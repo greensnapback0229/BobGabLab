@@ -147,6 +147,26 @@ const items = [
     name: '칼국수',
     src: new URL('@/assets/images/food2.png', import.meta.url).href,
   },
+  {
+    name: '만두',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '샤브칼국수',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '해장국',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '마라탕',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
+  {
+    name: '학식',
+    src: new URL('@/assets/images/food2.png', import.meta.url).href,
+  },
 ];
 
 const currentRotation = ref(0);
@@ -256,6 +276,41 @@ function determineSelectedItem() {
 
 // 모든 추천 데이터를 음식 이름별로 분류 (예시)
 const allRecommendations = {
+  학식: [
+    {
+      name: '세종대 학식',
+      image:
+        'https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA2MjFfMjEw%2FMDAxNzE4OTM1Njg3NDE4.6NsUj8H0sk_eGvx8kDy5M_iSI6UGG5adnVDhBKUfWccg._AfVj-qjHC4GC0Ekrh2vt5ZJYj71xFyP4UYhKHxm3Vsg.JPEG%2FIMG_8624.jpeg&type=sc960_832',
+    },
+  ],
+  마라탕: [
+    {
+      name: '하이디라오',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fnaverbooking-phinf.pstatic.net%2F20231025_103%2F1698209931976DgVE7_PNG%2F-3cWUS6vZ-8NvglUNWekEzpW.png',
+    },
+  ],
+  해장국: [
+    {
+      name: '일품양평해장국',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20211231_104%2F16409115339623SUzH_JPEG%2FKakaoTalk_20211230_165241880.jpg',
+    },
+  ],
+  만두: [
+    {
+      name: '빠오즈푸',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fpup-review-phinf.pstatic.net%2FMjAyNTA0MDlfMjY5%2FMDAxNzQ0MTk0MTcyMTI0.oBnJXdTJFm93c2Q0pUnmNyw4QujrjGgSGMvvLLM57ckg.OJYvTpa3LxU6pYsRpC8j_z2_Wh0s_SsDanEbZNNEJw4g.JPEG%2FIMG_0796.jpeg%3Ftype%3Dw1500_60_sharpen',
+    },
+  ],
+  샤브칼국수: [
+    {
+      name: '샤브온당',
+      image:
+        'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20241120_287%2F17320620702652kvqM_JPEG%2F%25B8%25B6%25B6%25F3.jpg',
+    },
+  ],
   김치찌개: [
     {
       name: '칠순이네 김치찌개',
@@ -334,7 +389,7 @@ const allRecommendations = {
   ],
   떡볶이: [
     {
-      name: '우동 연가',
+      name: '우동연가',
       image:
         'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20240408_35%2F1712550532812a6kYq_JPEG%2F055A9169333.jpg',
     },
