@@ -1,5 +1,16 @@
 <template>
   <div>
+    <!-- 고정 배너 추가 -->
+    <div class="banner-wrapper mt-3 mb-3 d-flex justify-content-center">
+      <a
+        href="https://www.multicampus.com/main"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img :src="staticBanner" alt="IT's Your Life" class="banner-img" />
+      </a>
+    </div>
+
     <!-- Title -->
     <div class="container text-center my-5">
       <h2><span class="title-launch">LAUNCH</span> 파티 모집 🎈</h2>
@@ -47,6 +58,10 @@ export default {
   data() {
     return {
       parties: [],
+      staticBanner: new URL(
+        '@/assets/banners/static-banner.png',
+        import.meta.url
+      ).href,
     };
   },
   async created() {
@@ -96,6 +111,18 @@ body {
   background-color: #f5f5f1;
   font-family: 'Noto Sans KR', sans-serif;
 }
+.banner-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
+.banner-img {
+  width: 80%; /* 필요 시 조정 가능 */
+  max-width: 1500px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
 .logo-text {
   font-weight: bold;
   font-size: 24px;
