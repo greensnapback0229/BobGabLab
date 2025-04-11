@@ -37,16 +37,16 @@
         <tbody>
           <tr v-for="(party, index) in parties" :key="index">
             <td>{{ party.no }}</td>
-            <td class="text-start">
+            <td class="text-start" :title="party.title">
               <router-link
                 :to="party.link"
                 class="text-decoration-none text-dark"
               >
-                {{ party.title }}
+                {{ truncate(party.title, 20) }}
               </router-link>
             </td>
             <td>{{ party.date }} - {{ party.time }}</td>
-            <td>{{ party.posted }}</td>
+            <td :title="party.posted">{{ truncate(party.posted, 10) }}</td>
           </tr>
         </tbody>
       </table>
@@ -69,6 +69,12 @@ export default {
       ).href,
     };
   },
+  methods: {
+    truncate(text, maxLength) {
+      const str = String(text || '');
+      return str.length > maxLength ? str.slice(0, maxLength) + '...' : str;
+    },
+  },
   async created() {
     try {
       const response = await axios.get(
@@ -76,12 +82,12 @@ export default {
       );
       const allParties = response.data;
 
-      // 최신순으로 정렬 (약속시간 기준)
-      const sorted = allParties
-        .sort((a, b) => new Date(b.promiseTime) - new Date(a.promiseTime))
-        .slice(0, 7);
+      // 최신순으로 정렬
+      const sorted = allParties.sort(
+        (a, b) => new Date(b.promiseTime) - new Date(a.promiseTime)
+      );
 
-      // 각 owner의 username을 조회해서 posted로 사용
+      // 게시자 이름 포함한 데이터 구성
       const partiesWithUsernames = await Promise.all(
         sorted.map(async (party, index) => {
           const promise = dayjs(party.promiseTime);
@@ -105,7 +111,6 @@ export default {
             date: promise.format('YYYY-MM-DD'),
             time: promise.format('HH:mm'),
             posted: username,
-            highlight: index === 0,
             link: `/party/details/${party.id}`,
           };
         })
