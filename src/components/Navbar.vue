@@ -66,6 +66,11 @@ const handleLogout = () => {
 <style scoped>
 .navbar {
   height: 90px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
 .nav-link {
@@ -80,7 +85,7 @@ const handleLogout = () => {
   font-weight: bold;
 }
 
-/* ✅ 등록하기 버튼 스타일 */
+/* 등록하기 버튼 스타일 */
 .custom-register-btn {
   background-color: #71b548;
   color: white;
