@@ -37,6 +37,8 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = false;
     user.value = {};
     sessionStorage.clear(); // ✅ sessionStorage 사용
+    localStorage.clear();
+    window.location.replace('/login'); // 뒤로가기 방지
   }
 
   async function signup(newUser) {
