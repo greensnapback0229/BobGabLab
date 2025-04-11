@@ -12,15 +12,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-
   server: {
-    host: true, // 👈 이 줄 추가로 외부 접속 가능
-    proxy: {
-      '/api': {
-        target: 'http://server.meallab.site',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
+    host: true, // 외부 접근 허용
+    allowedHosts: ['meallab.site'], // 특정 호스트 허용
   },
 });

@@ -1,6 +1,11 @@
 <template>
   <br /><br />
-  <h1 class="title"><span class="launch">LAUNCH</span> 파티 등록 🎈</h1>
+  <!-- Title -->
+  <div class="container text-center my-5">
+    <h2 class="fw-bold">
+      <span class="title-launch">LAUNCH</span> 파티 등록 🎈
+    </h2>
+  </div>
 
   <div class="register-container">
     <form class="form">
@@ -31,7 +36,7 @@
       </div>
 
       <div class="form-group">
-        <label for="place"><strong>Where To Eat</strong></label>
+        <label for="place"><strong>What To Eat</strong></label>
         <input v-model="place" type="text" id="place" />
       </div>
 
@@ -65,7 +70,7 @@ const minute = ref('00분'); // ex: "00분"
 const place = ref('');
 const description = ref('');
 
-const userId = localStorage.getItem('userId') || ''; // 없으면 빈 문자열
+const userId = sessionStorage.getItem('userId') || ''; // 없으면 빈 문자열
 
 // ✅ 파라미터가 있을 경우에만 자동 입력
 onMounted(() => {
@@ -129,6 +134,8 @@ const registerParty = async () => {
     console.error('등록 실패:', err);
     alert('등록 중 오류 발생!');
   }
+
+  router.push('/party/list');
 };
 </script>
 
@@ -201,6 +208,12 @@ button {
 button:hover {
   background-color: #66bb44;
   color: white;
+}
+
+.title-launch {
+  font-weight: bold;
+  font-size: 32px;
+  color: #5db85c;
 }
 :global(body) {
   background-color: #faf8f3;

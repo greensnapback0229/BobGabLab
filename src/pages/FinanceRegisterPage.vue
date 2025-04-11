@@ -118,7 +118,7 @@ const foodTypes = [
 ];
 
 const submitFinance = async () => {
-  const userId = localStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
   if (!userId) {
     alert('로그인이 필요합니다.');
     return;
@@ -157,7 +157,6 @@ const submitFinance = async () => {
 .form-page {
   background-color: #faf8f3;
   min-height: 100vh;
-  padding-top: 40px;
 }
 
 .form-container {

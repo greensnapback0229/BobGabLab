@@ -153,7 +153,7 @@ const submitFinance = async () => {
 
   try {
     await axios.put(`/api/finance/${financeId}`, updatedData);
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     if (userId) {
       await financeStore.loadFinances(userId);
     }
@@ -174,7 +174,6 @@ const submitFinance = async () => {
 .form-page {
   background-color: #faf8f3;
   min-height: 100vh;
-  padding-top: 40px;
 }
 
 .form-container {

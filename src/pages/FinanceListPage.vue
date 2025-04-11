@@ -1,7 +1,7 @@
 <template>
   <div class="list-page">
     <div class="container mt-4">
-      <h3 class="mb-4 text-center text-success fw-bold custom-title">
+      <h3 class="mb-4 text-center text-custom-green fw-bold custom-title">
         거래 내역
       </h3>
 
@@ -53,49 +53,50 @@
         조건에 맞는 거래 내역이 없습니다.
       </div>
 
-      <!-- 거래 리스트 -->
-      <div v-else class="d-flex flex-column gap-1">
-        <div
-          v-for="item in filteredFinances"
-          :key="item.id"
-          class="p-2 rounded border bg-white shadow-sm"
-        >
-          <div class="d-flex justify-content-between mb-1">
-            <span class="fw-bold">{{ formatDate(item.date) }}</span>
-            <span
-              :class="item.type === 'INPUT' ? 'text-success' : 'text-danger'"
-            >
-              {{ item.type === 'INPUT' ? '수입' : '지출' }}
-            </span>
-          </div>
+      <!-- 거래 리스트 (고정 높이 스크롤 영역) -->
+      <div v-else class="scroll-wrapper">
+        <div class="scroll-area d-flex flex-column gap-1" ref="scrollAreaRef">
+          <div
+            v-for="item in filteredFinances"
+            :key="item.id"
+            class="p-2 rounded border bg-white shadow-sm"
+          >
+            <div class="d-flex justify-content-between mb-1">
+              <span class="fw-bold">{{ formatDate(item.date) }}</span>
+              <span
+                :class="item.type === 'INPUT' ? 'text-success' : 'text-danger'"
+              >
+                {{ item.type === 'INPUT' ? '수입' : '지출' }}
+              </span>
+            </div>
 
-          <!-- 음식 관련 정보: 지출일 때만 표시 -->
-          <div class="mb-1" v-if="item.type === 'OUTPUT'">
-            <strong>음식 이름:</strong> {{ item.food }}
-          </div>
-          <div class="mb-1" v-if="item.type === 'OUTPUT'">
-            <strong>음식 종류:</strong> {{ formatFoodType(item.foodType) }}
-          </div>
+            <div class="mb-1" v-if="item.type === 'OUTPUT'">
+              <strong>음식 이름:</strong> {{ item.food }}
+            </div>
+            <div class="mb-1" v-if="item.type === 'OUTPUT'">
+              <strong>음식 종류:</strong> {{ formatFoodType(item.foodType) }}
+            </div>
 
-          <div class="mb-1">
-            <strong>금액:</strong> {{ item.amount.toLocaleString() }}원
-          </div>
-          <div class="mb-2">
-            <strong>메모:</strong> {{ item.description || '-' }}
-          </div>
-          <div class="text-end">
-            <router-link
-              :to="`/finance/edit/${item.id}`"
-              class="btn btn-sm btn-outline-primary me-2"
-            >
-              수정
-            </router-link>
-            <button
-              @click="deleteItem(item.id)"
-              class="btn btn-sm btn-outline-danger"
-            >
-              삭제
-            </button>
+            <div class="mb-1">
+              <strong>금액:</strong> {{ item.amount.toLocaleString() }}원
+            </div>
+            <div class="mb-2">
+              <strong>메모:</strong> {{ item.description || '-' }}
+            </div>
+            <div class="text-end">
+              <router-link
+                :to="`/finance/edit/${item.id}`"
+                class="btn btn-sm btn-outline-primary me-2"
+              >
+                수정
+              </router-link>
+              <button
+                @click="deleteItem(item.id)"
+                class="btn btn-sm btn-outline-danger"
+              >
+                삭제
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -104,7 +105,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useFinanceStore } from '@/stores/finance';
 import { useAuthStore } from '@/stores/auth';
@@ -120,10 +121,14 @@ const filters = ref({
   endDate: '',
 });
 
+// 스크롤 영역을 ref로 참조
+const scrollAreaRef = ref(null);
+
+// 거래 내역 로드
 watch(
   () => route.fullPath,
   async () => {
-    const userId = authStore.user?.id || localStorage.getItem('userId');
+    const userId = authStore.user?.id || sessionStorage.getItem('userId');
     if (userId) {
       await financeStore.loadFinances(userId);
     }
@@ -136,7 +141,7 @@ const deleteItem = async (id) => {
     if (typeof financeStore.deleteFinance === 'function') {
       await financeStore.deleteFinance(id);
       await financeStore.loadFinances(
-        authStore.user?.id || localStorage.getItem('userId')
+        authStore.user?.id || sessionStorage.getItem('userId')
       );
     } else {
       console.error('deleteFinance 함수가 정의되어 있지 않습니다.');
@@ -163,7 +168,7 @@ const formatFoodType = (value) => {
   );
 };
 
-// ✅ 날짜 내림차순 정렬 추가됨
+// 거래 필터링 + 정렬
 const filteredFinances = computed(() => {
   return financeStore.finances
     .filter((item) => {
@@ -205,5 +210,17 @@ const filteredFinances = computed(() => {
 .shadow-sm .mb-1,
 .shadow-sm .mb-2 {
   margin-bottom: 2px !important;
+}
+
+.scroll-wrapper {
+  height: 500px;
+  overflow: hidden;
+}
+
+.scroll-area {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-bottom: 80px;
 }
 </style>

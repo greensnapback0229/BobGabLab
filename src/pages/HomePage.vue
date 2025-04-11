@@ -60,7 +60,7 @@
       <div class="row mt-4 g-4">
         <!-- 최근 거래 내역 -->
         <div class="col-12 col-lg-6">
-          <h4 class="text-start mb-3">📋 최근 거래 내역</h4>
+          <h4 class="text-start mb-3 fw-bold">📋 최근 거래 내역</h4>
           <div class="d-flex flex-column gap-3">
             <div
               v-for="item in recentFinances"
@@ -94,7 +94,7 @@
 
         <!-- 최근 파티 목록 -->
         <div class="col-12 col-lg-6">
-          <h4 class="text-start mb-3">🎉 최근 파티 목록</h4>
+          <h4 class="text-start mb-3 fw-bold">🎉 최근 파티 목록</h4>
           <div class="d-flex flex-column gap-3">
             <div
               v-for="party in recentParties"
@@ -141,7 +141,7 @@ onMounted(() => {
 
 // 거래 내역과 파티 불러오기
 onMounted(async () => {
-  const userId = authStore.user?.id || localStorage.getItem('userId');
+  const userId = authStore.user?.id || sessionStorage.getItem('userId');
   if (userId) {
     await financeStore.loadFinances(userId);
     await loadRecentParties();
@@ -178,7 +178,7 @@ const totalProfit = computed(() => totalInput.value - totalOutput.value);
 const recentFinances = computed(() => {
   return [...financeStore.finances]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 2);
+    .slice(0, 1);
 });
 
 const formatDate = (dateStr) => {
@@ -199,7 +199,7 @@ const formatFoodType = (value) => {
 
 const loadRecentParties = async () => {
   try {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     if (!userId) return;
 
     const res = await fetch(`https://server.meallab.site/user/${userId}`);

@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false);
   const user = ref({});
 
-  const CORS_URL = '/api';
+  const CORS_URL = 'https://server.meallab.site';
   const corsUrl = CORS_URL + '/user';
 
   async function login(username, password) {
@@ -20,8 +20,8 @@ export const useAuthStore = defineStore('auth', () => {
       if (found) {
         isAuthenticated.value = true;
         user.value = found;
-        localStorage.setItem('auth', 'true');
-        localStorage.setItem('userId', found.id);
+        sessionStorage.setItem('auth', 'true');
+        sessionStorage.setItem('userId', found.id);
         return true;
       } else {
         isAuthenticated.value = false;
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     isAuthenticated.value = false;
     user.value = {};
-    localStorage.clear();
+    sessionStorage.clear(); // ✅ sessionStorage 사용
   }
 
   async function signup(newUser) {
@@ -58,8 +58,8 @@ export const useAuthStore = defineStore('auth', () => {
         isAuthenticated.value = true;
         user.value = newUser;
 
-        localStorage.setItem('auth', 'true');
-        localStorage.setItem('userId', newUser.id);
+        sessionStorage.setItem('auth', 'true');
+        sessionStorage.setItem('userId', newUser.id);
         return true;
       } else {
         isAuthenticated.value = false;
@@ -75,11 +75,9 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const id = user.value.id;
 
-      // 수정 요청 (json-server 기준 PATCH)
       const res = await axios.patch(`${corsUrl}/${id}`, updatedFields);
 
       if (res.status === 200) {
-        // user 객체 갱신
         user.value = res.data;
         return true;
       } else {
@@ -94,7 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function getUsernameByStoredId() {
     try {
-      const id = localStorage.getItem('userId');
+      const id = sessionStorage.getItem('userId'); // ✅ sessionStorage에서 가져오기
       if (!id) return null;
       const res = await axios.get(`${corsUrl}/${id}`);
       return res.data;
