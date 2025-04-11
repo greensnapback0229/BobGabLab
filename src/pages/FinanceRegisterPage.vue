@@ -42,6 +42,8 @@
             id="amount"
             class="form-control form-input"
             required
+            max="100000000"
+            placeholder="최대 1억까지 입력 가능"
           />
         </div>
 
