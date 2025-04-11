@@ -1,9 +1,5 @@
 <template>
-
-  <section class="random-lunch-page">
-
   <section class="random-lunch-page min-vh-100">
-
     <h2 class="fw-bold">오늘의 점심 메뉴는?</h2>
 
     <!-- 회전 컨테이너 -->
