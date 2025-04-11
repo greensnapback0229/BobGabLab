@@ -5,6 +5,7 @@
       <span class="title-launch">LAUNCH</span> 파티 상세 🎈
     </h2>
   </div>
+
   <div class="party-details">
     <p><strong>제목:</strong> {{ party.title }}</p>
     <p v-if="participants[0]">
@@ -23,6 +24,34 @@
 
     <br />
     {{ party.description }}
+  </div>
+
+  <!-- 댓글 표시 -->
+  <div class="comment-section mt-5">
+    <h4>💬 댓글</h4>
+    <ul class="list-group mb-3">
+      <li
+        v-for="(c, index) in comments"
+        :key="index"
+        class="list-group-item text-start"
+      >
+        <strong>{{ c.name }}</strong
+        >: {{ c.content }}
+      </li>
+    </ul>
+
+    <!-- 댓글 입력 -->
+    <div class="input-group mb-3">
+      <input
+        v-model="newComment"
+        type="text"
+        class="form-control"
+        placeholder="댓글을 입력하세요 (최대 200자)"
+        maxlength="200"
+        @keyup.enter="handleCommentSubmit"
+      />
+      <button class="btn btn-primary" @click="handleCommentSubmit">작성</button>
+    </div>
   </div>
 
   <!-- 참여하기 버튼 -->
@@ -45,7 +74,8 @@ const route = useRoute();
 const partyId = route.params.party_id;
 const party = ref({});
 const participants = ref([]);
-const userId = sessionStorage.getItem('userId'); // ✅ 여기서 가져옴
+const userId = sessionStorage.getItem('userId');
+const newComment = ref('');
 
 const fetchParty = async () => {
   try {
@@ -54,7 +84,6 @@ const fetchParty = async () => {
     );
     party.value = res.data;
     await fetchParticipants();
-    console.log('🚀 ~ fetchParty ~ party:', party);
   } catch (e) {
     console.error('파티 정보를 불러오는 중 오류 발생:', e);
   }
@@ -146,6 +175,50 @@ const handleJoin = async () => {
     alert('참여 중 문제가 발생했습니다.');
   }
 };
+
+const handleCommentSubmit = async () => {
+  if (!userId) {
+    alert('로그인이 필요합니다!');
+    return;
+  }
+
+  if (!newComment.value.trim()) {
+    alert('댓글을 입력해주세요!');
+    return;
+  }
+
+  if (newComment.value.length > 200) {
+    alert('댓글은 200자 이하로 작성해주세요!');
+    return;
+  }
+
+  try {
+    const userRes = await axios.get(
+      `https://server.meallab.site/user/${userId}`
+    );
+    const username = userRes.data.username;
+
+    const updatedComments = [
+      ...(party.value.comment || []),
+      {
+        content: newComment.value,
+        name: username,
+      },
+    ];
+
+    await axios.patch(`https://server.meallab.site/lunchParty/${partyId}`, {
+      comment: updatedComments,
+    });
+
+    party.value.comment = updatedComments;
+    newComment.value = '';
+  } catch (e) {
+    console.error('댓글 등록 중 오류 발생:', e);
+    alert('댓글 등록에 실패했습니다.');
+  }
+};
+
+const comments = computed(() => party.value.comment || []);
 </script>
 
 <style scoped>
@@ -165,8 +238,8 @@ const handleJoin = async () => {
   font-size: 32px;
   color: #5db85c;
 }
-
-:global(body) {
-  background-color: #faf8f3;
+.comment-section {
+  max-width: 600px;
+  margin: 2rem auto;
 }
 </style>
