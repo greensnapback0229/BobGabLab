@@ -32,6 +32,7 @@
           placeholder="이름"
           v-model="username"
           class="form-control form-control-lg"
+          maxlength="10"
         />
       </div>
 
@@ -65,8 +66,14 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const handleSignup = async () => {
-  if (!username.value || !password.value || !classNum.value) {
+  const trimmedUsername = username.value.trim();
+  if (!trimmedUsername || !password.value || !classNum.value) {
     alert('모든 항목을 입력해주세요.');
+    return;
+  }
+
+  if (trimmedUsername.length > 10) {
+    alert('이름은 10자 이내로 입력해주세요.');
     return;
   }
 
