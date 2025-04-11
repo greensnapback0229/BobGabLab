@@ -4,6 +4,7 @@
     <div :class="['content', { 'with-margin': !isSpecialRoute }]">
       <RouterView />
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import './assets/main.css'; // main.css: 전역 스타일 (예: .bg-custom-green 등)
 import Navbar from './components/Navbar.vue';
+import Footer from './components/Footer.vue';
 
 const route = useRoute();
 const router = useRouter();
