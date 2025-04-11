@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = found;
         sessionStorage.setItem('auth', 'true');
         sessionStorage.setItem('userId', found.id);
+        sessionStorage.setItem('username', found.username);
         return true;
       } else {
         isAuthenticated.value = false;
@@ -62,6 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         sessionStorage.setItem('auth', 'true');
         sessionStorage.setItem('userId', newUser.id);
+        sessionStorage.setItem('username', newUser.username);
         return true;
       } else {
         isAuthenticated.value = false;
