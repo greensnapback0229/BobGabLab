@@ -1,5 +1,9 @@
 <template>
+
+  <section class="random-lunch-page">
+
   <section class="random-lunch-page min-vh-100">
+
     <h2 class="fw-bold">오늘의 점심 메뉴는?</h2>
 
     <!-- 회전 컨테이너 -->
@@ -63,12 +67,12 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-// src/data/foods.json 파일 불러오기 (src 필드가 제거된 상태)
+// src/data/foods.json 파일 불러오기 (src 관련 정보는 제거된 상태)
 import foodsData from '@/data/foods.json';
 
 const router = useRouter();
 
-// JSON에서 불러온 데이터를 그대로 사용 (src 관련 정보는 없음)
+// JSON에서 불러온 데이터를 그대로 사용
 const items = foodsData.items;
 const allRecommendations = foodsData.recommendations;
 
@@ -141,7 +145,7 @@ function startRotation() {
   if (isRotating.value) return;
   isRotating.value = true;
   selectedItem.value = null;
-  showRecommendations.value = false; // 추첨 시 추천 섹션 초기화
+  showRecommendations.value = false;
   startTime = null;
   animationFrame = requestAnimationFrame(animate);
 }
@@ -173,7 +177,6 @@ function determineSelectedItem() {
   selectedItem.value = items[chosenIndex];
   const finalRotation = 90 - (angleStep * chosenIndex - 90);
   currentRotation.value = finalRotation;
-  // 랜덤 추첨 완료 후 추천 섹션 표시
   showRecommendations.value = true;
 }
 
@@ -190,7 +193,15 @@ function selectFood() {
 </script>
 
 <style scoped>
+/* 이 컴포넌트만 적용되는 스타일 – 글로벌 html, body의 스크롤 숨김과 상관없이
+   페이지 전체를 fixed로 고정하고 내부에서 스크롤되게 함 */
 .random-lunch-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: scroll;
   text-align: center;
   padding: 2rem;
   background-color: #faf8f3;
@@ -337,5 +348,29 @@ function selectFood() {
 .card-info p {
   font-size: 0.9rem;
   color: #555;
+}
+</style>
+
+<style>
+/* Global CSS – 이 부분은 다른 페이지에도 적용되며, html, body에서 스크롤이 숨겨짐 */
+.bg-custom-green {
+  background-color: #71b548 !important;
+}
+.bg-custom-green-op {
+  background-color: rgba(113, 181, 72, 0.5) !important;
+}
+.text-custom-green {
+  color: #003d0f !important;
+}
+.div-custom-beige {
+  background-color: #faf8f3 !important;
+}
+.nav-link img {
+  height: 25px; /* 기존보다 살짝 작게 */
+  margin-right: 8px; /* 아이콘 오른쪽 간격 확보 */
+}
+html,
+body {
+  overflow-y: hidden;
 }
 </style>
