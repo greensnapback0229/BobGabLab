@@ -19,6 +19,9 @@
         {{ user.username }}
       </li>
     </ul>
+
+    <br />
+    {{ party.description }}
   </div>
   <!-- 참여하기 버튼 -->
   <div class="text-center mt-4">
@@ -43,6 +46,7 @@ const fetchParty = async () => {
     );
     party.value = res.data;
     await fetchParticipants();
+    console.log('🚀 ~ fetchParty ~ party:', party);
   } catch (e) {
     console.error('파티 정보를 불러오는 중 오류 발생:', e);
   }

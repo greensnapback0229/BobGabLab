@@ -100,6 +100,7 @@ const registerParty = async () => {
     location: place.value,
     promiseTime: isoTime,
     participation: [userId],
+    description: description.value,
   };
 
   try {
