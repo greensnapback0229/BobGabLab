@@ -24,9 +24,15 @@
     <br />
     {{ party.description }}
   </div>
+
   <!-- 참여하기 버튼 -->
   <div class="text-center mt-4">
     <button class="btn btn-success" @click="handleJoin">참여하기</button>
+  </div>
+
+  <!-- 삭제하기 버튼 (주최자만 보임) -->
+  <div class="text-center mt-4" v-if="String(party.owner) === userId">
+    <button class="btn btn-danger" @click="handleDelete">삭제하기</button>
   </div>
 </template>
 
@@ -39,6 +45,7 @@ const route = useRoute();
 const partyId = route.params.party_id;
 const party = ref({});
 const participants = ref([]);
+const userId = sessionStorage.getItem('userId'); // ✅ 여기서 가져옴
 
 const fetchParty = async () => {
   try {
@@ -69,10 +76,8 @@ const fetchParticipants = async () => {
   }
 };
 
-// ✅ 여기서 mount 시 실행
 onMounted(fetchParty);
 
-// ✅ 약속시간 포맷
 const formattedTime = computed(() => {
   if (!party.value.promiseTime) return '';
   const date = new Date(party.value.promiseTime);
@@ -85,9 +90,21 @@ const formattedTime = computed(() => {
   });
 });
 
-// ✅ 참여하기 버튼
+const handleDelete = async () => {
+  const confirmDelete = confirm('정말로 이 파티를 삭제하시겠습니까?');
+  if (!confirmDelete) return;
+
+  try {
+    await axios.delete(`https://server.meallab.site/lunchParty/${partyId}`);
+    alert('파티가 삭제되었습니다.');
+    window.location.href = '/party-list';
+  } catch (err) {
+    console.error('삭제 중 오류 발생:', err);
+    alert('삭제 중 문제가 발생했습니다.');
+  }
+};
+
 const handleJoin = async () => {
-  const userId = sessionStorage.getItem('userId');
   if (!userId) {
     alert('로그인이 필요합니다!');
     return;
@@ -101,7 +118,6 @@ const handleJoin = async () => {
   const updatedParticipants = [...party.value.participation, userId];
 
   try {
-    // ✅ 1. lunchParty 참여 업데이트
     await axios.patch(`https://server.meallab.site/lunchParty/${partyId}`, {
       participation: updatedParticipants,
     });
@@ -109,19 +125,16 @@ const handleJoin = async () => {
     party.value.participation = updatedParticipants;
     await fetchParticipants();
 
-    // ✅ 2. user 정보 가져오기
     const userRes = await axios.get(
       `https://server.meallab.site/user/${userId}`
     );
     const user = userRes.data;
 
-    // ✅ 3. lunchParty 배열 업데이트 + lastLunch 설정
     const updatedUser = {
       lunchParty: [...(user.lunchParty || []), partyId],
       lastLunch: Number(partyId),
     };
 
-    // ✅ 4. user 정보 PATCH 요청
     await axios.patch(
       `https://server.meallab.site/user/${userId}`,
       updatedUser
