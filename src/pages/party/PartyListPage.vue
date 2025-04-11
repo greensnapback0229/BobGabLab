@@ -31,7 +31,7 @@
             <th>No.</th>
             <th>Title</th>
             <th>약속 시간</th>
-            <th>게시일</th>
+            <th>게시자</th>
           </tr>
         </thead>
         <tbody>
@@ -76,36 +76,42 @@ export default {
       );
       const allParties = response.data;
 
-      console.log(response);
       // 최신순으로 정렬 (약속시간 기준)
       const sorted = allParties
         .sort((a, b) => new Date(b.promiseTime) - new Date(a.promiseTime))
         .slice(0, 7);
 
-      // 포맷팅된 데이터로 변환
-      this.parties = sorted.map((party, index) => {
-        const promise = dayjs(party.promiseTime);
-        const now = dayjs();
+      // 각 owner의 username을 조회해서 posted로 사용
+      const partiesWithUsernames = await Promise.all(
+        sorted.map(async (party, index) => {
+          const promise = dayjs(party.promiseTime);
+          let username = '알 수 없음';
 
-        let posted = '';
-        if (now.diff(promise, 'day') === 0) {
-          posted = '하루 전';
-        } else if (now.diff(promise, 'day') < 0) {
-          posted = '미래';
-        } else {
-          posted = '지난 주';
-        }
+          try {
+            const userRes = await axios.get(
+              `https://server.meallab.site/user/${party.owner}`
+            );
+            username = userRes.data.username;
+          } catch (err) {
+            console.warn(
+              `Failed to fetch user for owner ID ${party.owner}`,
+              err
+            );
+          }
 
-        return {
-          no: index + 1,
-          title: party.title,
-          date: promise.format('YYYY-MM-DD'),
-          time: promise.format('HH:mm'),
-          posted,
-          highlight: index === 0, // 첫 번째 항목만 강조 표시
-          link: `/party/details/${party.id}`,
-        };
-      });
+          return {
+            no: index + 1,
+            title: party.title,
+            date: promise.format('YYYY-MM-DD'),
+            time: promise.format('HH:mm'),
+            posted: username,
+            highlight: index === 0,
+            link: `/party/details/${party.id}`,
+          };
+        })
+      );
+
+      this.parties = partiesWithUsernames;
     } catch (err) {
       console.error('Error fetching lunch parties:', err);
     }
@@ -123,7 +129,7 @@ body {
   overflow: hidden;
 }
 .banner-img {
-  width: 80%; /* 필요 시 조정 가능 */
+  width: 80%;
   max-width: 1500px;
   object-fit: cover;
   display: block;
