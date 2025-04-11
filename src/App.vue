@@ -1,16 +1,14 @@
 <template>
   <div class="app">
-    <!-- 로그인/회원가입 경로가 아니라면 Navbar 표시 -->
     <Navbar v-if="!['/login', '/signup'].includes(route.path)" />
-    <!-- 콘텐츠 영역: Navbar가 고정되어 있으므로 margin-top을 줘서 겹치지 않게 함 -->
-    <div class="content">
+    <div :class="['content', { 'with-margin': !isSpecialRoute }]">
       <RouterView />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import './assets/main.css'; // main.css: 전역 스타일 (예: .bg-custom-green 등)
 import Navbar from './components/Navbar.vue';
@@ -19,8 +17,16 @@ const route = useRoute();
 const router = useRouter();
 const isLoggedIn = ref(false);
 
+const noHeaderRoutes = ['/login', '/signup'];
+const noHeaderPattern = /^\/party\/details\/\d+$/;
+
+const isSpecialRoute = computed(() => {
+  const path = route.path;
+  return noHeaderRoutes.includes(path) || noHeaderPattern.test(path);
+});
+
 onMounted(() => {
-  const isLoggedIn = localStorage.getItem('auth') === 'true';
+  const isLoggedIn = sessionStorage.getItem('auth') === 'true';
   const currentPath = router.currentRoute.value.path;
 
   if (!isLoggedIn && currentPath !== '/login') {
@@ -39,6 +45,10 @@ onMounted(() => {
 }
 
 .content {
+  margin-top: 0;
+}
+
+.content.with-margin {
   /* 헤더 높이 90px만큼 여백 처리 */
   margin-top: 90px;
 }

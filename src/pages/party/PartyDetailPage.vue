@@ -1,6 +1,7 @@
 <template>
   <div class="container text-center my-5">
     <h2 class="fw-bold">
+      <br />
       <span class="title-launch">LAUNCH</span> 파티 상세 🎈
     </h2>
   </div>
