@@ -70,6 +70,8 @@
             id="food"
             class="form-control form-input"
             :required="form.type === 'OUTPUT'"
+            maxlength="10"
+            placeholder="최대 10자까지 입력"
           />
         </div>
 
@@ -79,6 +81,8 @@
             v-model="form.description"
             id="description"
             class="form-control form-input"
+            maxlength="100"
+            placeholder="최대 100자까지 입력"
           ></textarea>
         </div>
 
@@ -134,7 +138,7 @@ const submitFinance = async () => {
     description: form.value.description,
   };
 
-  console.log('보낼 financeData:', newFinance); // ✅ 여기에 추가
+  console.log('보낼 financeData:', newFinance);
 
   const success = await financeStore.addFinance(newFinance);
 
