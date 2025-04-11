@@ -71,6 +71,8 @@
             id="food"
             class="form-control form-input"
             :required="form.type === 'OUTPUT'"
+            maxlength="10"
+            placeholder="최대 10자까지 입력"
           />
         </div>
 
@@ -80,6 +82,8 @@
             v-model="form.description"
             id="description"
             class="form-control form-input"
+            maxlength="100"
+            placeholder="최대 100자까지 입력"
           ></textarea>
         </div>
 
@@ -124,7 +128,9 @@ const foodTypes = [
 // 기존 내역 불러오기
 onMounted(async () => {
   try {
-    const res = await axios.get(`/api/finance/${financeId}`);
+    const res = await axios.get(
+      `https://server.meallab.site/finance/${financeId}`
+    );
     const data = res.data;
     form.value = {
       type: data.type,
@@ -152,7 +158,10 @@ const submitFinance = async () => {
   };
 
   try {
-    await axios.put(`/api/finance/${financeId}`, updatedData);
+    await axios.put(
+      `https://server.meallab.site/finance/${financeId}`,
+      updatedData
+    );
     const userId = sessionStorage.getItem('userId');
     if (userId) {
       await financeStore.loadFinances(userId);
