@@ -48,17 +48,11 @@ const router = useRouter();
 const handleLogin = async () => {
   const success = await auth.login(username.value, password.value);
   if (success) {
-    // ✅ 로그인 성공 후, 세션에서 user 정보 다시 불러와서 저장
-    const userData = await auth.getUsernameByStoredId();
-    if (userData) {
-      auth.user = userData;
-    }
-
-    // ✅ 새로고침 포함 이동
-    window.location.replace('/');
+    router.push('/');
   } else {
     alert('로그인 실패: 아이디 또는 비밀번호가 틀립니다.');
   }
+  console.log(username.value);
 };
 </script>
 <style></style>
