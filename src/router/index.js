@@ -78,7 +78,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = localStorage.getItem('auth') === 'true';
+  const isLoggedIn = sessionStorage.getItem('auth') === 'true';
 
   if (to.meta.requiresAuth && !isLoggedIn) {
     return next('/login');
